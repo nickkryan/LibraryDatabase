@@ -1,0 +1,13 @@
+lib/
+bin/
+#java
+*.class
+#temp
+*.swp
+*.swo
+*.swn
+#packages
+*.zip
+#keys
+*.der
+*.pem
