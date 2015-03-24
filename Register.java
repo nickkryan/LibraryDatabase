@@ -13,13 +13,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Login extends GridPane {
+public class Register extends GridPane {
 
-    public static final int WIDTH = 300, HEIGHT = 275;
+    public static final int WIDTH = 400, HEIGHT = 275;
 
     private Main app;
 
-    public Login(Main app) {
+    public Register(Main app) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -27,7 +27,7 @@ public class Login extends GridPane {
         setVgap(10);
         setPadding(new Insets(15, 15, 15, 15));
 
-        Label title = new Label("Login");
+        Label title = new Label("New User Registration");
         HBox hbTitle = new HBox();
         hbTitle.setAlignment(Pos.CENTER);
         hbTitle.getChildren().add(title);
@@ -45,39 +45,26 @@ public class Login extends GridPane {
         PasswordField pwBox = new PasswordField();
         add(pwBox, 1, 2);
 
-        Button login = new Button("Login");
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.CENTER);
-        hbBtn.getChildren().add(login);
-        add(hbBtn, 0, 3, 2, 1);
+        Label pw2 = new Label("Confirm Password:");
+        add(pw2, 0, 3);
 
-        HBox text = new HBox(10);
-        text.setAlignment(Pos.CENTER);
-        text.getChildren().add(new Label("OR"));
-        add(text, 0, 4, 2, 1);
+        PasswordField pw2Box = new PasswordField();
+        add(pw2Box, 1, 3);
 
-        Button register = new Button("Create Account");
+        Button register = new Button("Register");
         HBox hbBtn2 = new HBox(10);
         hbBtn2.setAlignment(Pos.CENTER);
         hbBtn2.getChildren().add(register);
-        add(hbBtn2, 0, 5, 2, 1);
+        add(hbBtn2, 0, 4, 2, 1);
 
         final Text actionTarget = new Text();
-        add(actionTarget, 0, 6, 2, 1);
-
-        login.setOnAction((ActionEvent e) -> {
-            if (Database.login(userTextField.getText(), pwBox.getText())) {
-                actionTarget.setFill(Color.GREEN);
-                actionTarget.setText("Correct Login");
-            } else {
-                actionTarget.setFill(Color.FIREBRICK);
-                actionTarget.setText("Incorrect Login");
-            }
-        });
+        add(actionTarget, 0, 5, 2, 1);
 
         register.setOnAction((ActionEvent e) -> {
-            Register reg = new Register(app);
-            app.changeScene(new Scene(reg, reg.WIDTH, reg.HEIGHT));
+            if (!pw.getText().equals(pw2.getText())) {
+                actionTarget.setFill(Color.FIREBRICK);
+                actionTarget.setText("Passwords do not match!");
+            }
         });
     }
 }
