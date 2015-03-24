@@ -33,23 +33,23 @@ public class Register extends GridPane {
         hbTitle.getChildren().add(title);
         add(hbTitle, 0, 0, 2, 1);
 
-        Label username = new Label("Username:");
-        add(username, 0, 1);
+        Label usernameLabel = new Label("Username:");
+        add(usernameLabel, 0, 1);
 
-        TextField userTextField = new TextField();
-        add(userTextField, 1, 1);
+        TextField username = new TextField();
+        add(username, 1, 1);
 
-        Label pw = new Label("Password:");
-        add(pw, 0, 2);
+        Label pwLabel = new Label("Password:");
+        add(pwLabel, 0, 2);
 
-        PasswordField pwBox = new PasswordField();
-        add(pwBox, 1, 2);
+        PasswordField pw = new PasswordField();
+        add(pw, 1, 2);
 
-        Label pw2 = new Label("Confirm Password:");
-        add(pw2, 0, 3);
+        Label pw2Label = new Label("Confirm Password:");
+        add(pw2Label, 0, 3);
 
-        PasswordField pw2Box = new PasswordField();
-        add(pw2Box, 1, 3);
+        PasswordField pw2 = new PasswordField();
+        add(pw2, 1, 3);
 
         Button register = new Button("Register");
         HBox hbBtn2 = new HBox(10);
@@ -61,9 +61,20 @@ public class Register extends GridPane {
         add(actionTarget, 0, 5, 2, 1);
 
         register.setOnAction((ActionEvent e) -> {
-            if (!pw.getText().equals(pw2.getText())) {
+            if (username.getText().isEmpty() || pw.getText().isEmpty() || pw2.getText().isEmpty()) {
+                actionTarget.setFill(Color.FIREBRICK);
+                actionTarget.setText("All fields are required and must not be empty!");
+            } else if (!pw.getText().equals(pw2.getText())) {
                 actionTarget.setFill(Color.FIREBRICK);
                 actionTarget.setText("Passwords do not match!");
+            } else {
+                if (Database.register(username.getText(), pw.getText())) {
+                    actionTarget.setFill(Color.GREEN);
+                    actionTarget.setText("User successfully registered!");
+                } else {
+                    actionTarget.setFill(Color.FIREBRICK);
+                    actionTarget.setText("Username already registered!");
+                }
             }
         });
     }

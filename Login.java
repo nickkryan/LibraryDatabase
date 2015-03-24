@@ -33,17 +33,17 @@ public class Login extends GridPane {
         hbTitle.getChildren().add(title);
         add(hbTitle, 0, 0, 2, 1);
 
-        Label username = new Label("Username:");
-        add(username, 0, 1);
+        Label usernameLabel = new Label("Username:");
+        add(usernameLabel, 0, 1);
 
-        TextField userTextField = new TextField();
-        add(userTextField, 1, 1);
+        TextField username = new TextField();
+        add(username, 1, 1);
 
-        Label pw = new Label("Password:");
-        add(pw, 0, 2);
+        Label pwLabel = new Label("Password:");
+        add(pwLabel, 0, 2);
 
-        PasswordField pwBox = new PasswordField();
-        add(pwBox, 1, 2);
+        PasswordField pw = new PasswordField();
+        add(pw, 1, 2);
 
         Button login = new Button("Login");
         HBox hbBtn = new HBox(10);
@@ -66,7 +66,7 @@ public class Login extends GridPane {
         add(actionTarget, 0, 6, 2, 1);
 
         login.setOnAction((ActionEvent e) -> {
-            if (Database.login(userTextField.getText(), pwBox.getText())) {
+            if (Database.login(username.getText(), pw.getText())) {
                 actionTarget.setFill(Color.GREEN);
                 actionTarget.setText("Correct Login");
             } else {
