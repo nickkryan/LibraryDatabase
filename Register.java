@@ -1,4 +1,3 @@
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,13 +10,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 public class Register extends GridPane {
 
     public static final int WIDTH = 400, HEIGHT = 275;
 
-    private Main app;
+    private final Main app;
 
     public Register(Main app) {
         this.app = app;
@@ -71,11 +69,16 @@ public class Register extends GridPane {
                 if (Database.register(username.getText(), pw.getText())) {
                     actionTarget.setFill(Color.GREEN);
                     actionTarget.setText("User successfully registered!");
+                    app.changeScene(Profile.makeScene(app));
                 } else {
                     actionTarget.setFill(Color.FIREBRICK);
                     actionTarget.setText("Username already registered!");
                 }
             }
         });
+    }
+
+    public static Scene makeScene(Main app) {
+        return new Scene(new Register(app), WIDTH, HEIGHT);
     }
 }

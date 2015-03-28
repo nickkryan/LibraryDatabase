@@ -1,6 +1,5 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +20,6 @@ public class Database {
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -37,7 +35,6 @@ public class Database {
             return rs == 1;
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }

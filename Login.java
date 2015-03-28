@@ -1,4 +1,3 @@
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,13 +10,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 public class Login extends GridPane {
 
     public static final int WIDTH = 300, HEIGHT = 275;
 
-    private Main app;
+    private final Main app;
 
     public Login(Main app) {
         this.app = app;
@@ -76,8 +74,11 @@ public class Login extends GridPane {
         });
 
         register.setOnAction((ActionEvent e) -> {
-            Register reg = new Register(app);
-            app.changeScene(new Scene(reg, reg.WIDTH, reg.HEIGHT));
+            app.changeScene(Register.makeScene(app));
         });
+    }
+
+    public static Scene makeScene(Main app) {
+        return new Scene(new Login(app), WIDTH, HEIGHT);
     }
 }
