@@ -13,8 +13,6 @@ import javafx.scene.text.Text;
 
 public class Login extends GridPane {
 
-    public static final int WIDTH = 300, HEIGHT = 275;
-
     private final Main app;
 
     public Login(Main app) {
@@ -79,6 +77,6 @@ public class Login extends GridPane {
     }
 
     public static Scene makeScene(Main app) {
-        return new Scene(new Login(app), WIDTH, HEIGHT);
+        return new Scene(new Login(app));
     }
 }
