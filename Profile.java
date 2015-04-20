@@ -13,7 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-
+import java.util.regex.Pattern;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.paint.Paint;
@@ -22,6 +22,7 @@ import javafx.scene.layout.CornerRadii;
 
 public class Profile extends GridPane {
     private final Main app;
+    private final String user;
 
     private TextField firstname, lastname, dob, email;
     private TextArea address;
@@ -29,8 +30,13 @@ public class Profile extends GridPane {
     private CheckBox faculty;
     private Label departmentLabel;
 
-    public Profile(Main app) {
+    private static final Pattern rfc2822 = Pattern.compile(
+        "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    );
+
+    public Profile(Main app, String user) {
         this.app = app;
+        this.user = user;
 
         setAlignment(Pos.CENTER);
         setHgap(10);
@@ -94,7 +100,7 @@ public class Profile extends GridPane {
         add(departmentLabel, 2, 4);
 
         department = new ComboBox<String>();
-        department.getItems().addAll("PUT DEPARTMENTS HERE");
+        department.getItems().addAll("FIXME");
         department.setVisible(false);
         add(department, 3, 4);
 
@@ -114,16 +120,32 @@ public class Profile extends GridPane {
         });
 
         submit.setOnAction((ActionEvent e) -> {
-            if (faculty.isSelected()
+            if (firstname.getText().equals("") || lastname.getText().equals("")) {
+                actionTarget.setText("Please enter your first and last name");
+            } else if (faculty.isSelected()
                  && department.getSelectionModel().getSelectedItem() == null) {
                 actionTarget.setText("Please select a Department");
+            } else if (!email.getText().equals("") && !rfc2822.matcher(email.getText()).matches()) {
+                actionTarget.setText("Invalid email! Please match format: email@site.com");
             } else {
-                app.changeScene(SearchBooks.makeScene(app));
+                if (Database.updateProfile(
+                    firstname.getText() + " " + lastname.getText(),
+                    dob.getText().equals("") ? null : dob.getText(),
+                    gender.getSelectionModel().getSelectedItem(),
+                    email.getText().equals("") ? null : email.getText(),
+                    address.getText().equals("") ? null : address.getText(),
+                    faculty.isSelected(),
+                    faculty.isSelected() ? department.getSelectionModel().getSelectedItem() : null,
+                    user)) {
+                    app.changeScene(SearchBooks.makeScene(app, user));
+                } else {
+                    actionTarget.setText("Invalid date of birth! Please match format: yyyy-mm-dd");
+                }
             }
         });
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new Profile(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new Profile(app, user));
     }
 }

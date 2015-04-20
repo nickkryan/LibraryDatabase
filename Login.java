@@ -63,7 +63,7 @@ public class Login extends GridPane {
 
         login.setOnAction((ActionEvent e) -> {
             if (Database.login(username.getText(), pw.getText())) {
-                app.changeScene(SearchBooks.makeScene(app));
+                app.changeScene(SearchBooks.makeScene(app, username.getText()));
             } else {
                 actionTarget.setFill(Color.FIREBRICK);
                 actionTarget.setText("Incorrect Login");

@@ -20,11 +20,13 @@ import javafx.scene.layout.CornerRadii;
 
 public class SearchBooks extends GridPane {
     private final Main app;
+    private final String user;
 
     private TextField isbn, title, author;
 
-    public SearchBooks(Main app) {
+    public SearchBooks(Main app, String user) {
         this.app = app;
+        this.user = user;
 
         setAlignment(Pos.CENTER);
         setHgap(10);
@@ -65,8 +67,8 @@ public class SearchBooks extends GridPane {
         add(test, 0, 4, 3, 1);
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new SearchBooks(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new SearchBooks(app, user));
     }
 }
 

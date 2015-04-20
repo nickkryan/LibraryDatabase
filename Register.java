@@ -65,9 +65,7 @@ public class Register extends GridPane {
                 actionTarget.setText("Passwords do not match!");
             } else {
                 if (Database.register(username.getText(), pw.getText())) {
-                    actionTarget.setFill(Color.GREEN);
-                    actionTarget.setText("User successfully registered!");
-                    app.changeScene(Profile.makeScene(app));
+                    app.changeScene(Profile.makeScene(app, username.getText()));
                 } else {
                     actionTarget.setFill(Color.FIREBRICK);
                     actionTarget.setText("Username already registered!");

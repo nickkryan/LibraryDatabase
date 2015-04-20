@@ -39,6 +39,24 @@ public class Database {
         return false;
     }
 
+    public static boolean updateProfile(String name, String dob, String gender,
+        String email, String address, boolean facultyStatus, String department,
+        String user) {
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "INSERT INTO StudentFaculty VALUES (?, ?, ?, 0, ?, ?, ?, 0, ?, ?)",
+                name, dob, gender, email, address, facultyStatus ? "1" : "0",
+                department, user);) {
+            int rs = ps.executeUpdate();
+            System.out.println(rs);
+            return rs == 1;
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return false;
+    }
+
     private static PreparedStatement createPreparedStatement(Connection con, String sql, String ... args) throws SQLException {
         PreparedStatement ps = con.prepareStatement(sql);
         for (int i = 0; i < args.length; i++) {
