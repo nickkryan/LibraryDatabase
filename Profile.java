@@ -100,7 +100,8 @@ public class Profile extends GridPane {
         add(departmentLabel, 2, 4);
 
         department = new ComboBox<String>();
-        department.getItems().addAll("FIXME");
+        department.getItems().addAll("MATH", "ENG", "PSYCH", "CS", "CM", "MECH",
+            "BME", "AE", "BIO", "CHEM", "CHEME", "EE", "HPS", "HTS", "INTA");
         department.setVisible(false);
         add(department, 3, 4);
 
