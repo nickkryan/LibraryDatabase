@@ -60,6 +60,7 @@ public class SearchBooks extends GridPane {
         Button search = new Button("Search");
 
         Button close = new Button("Close");
+        close.setOnAction(e -> System.exit(0));
 
         HBox test = new HBox(15);
         test.getChildren().addAll(back, search, close);
