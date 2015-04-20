@@ -54,23 +54,13 @@ public class SearchBooks extends GridPane {
 
 
         Button back = new Button("Back");
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.CENTER);
-        hbBtn.getChildren().add(back);
 
-
-        Button submit = new Button("Submit");
-        HBox hbBtn2 = new HBox(10);
-        hbBtn2.setAlignment(Pos.CENTER);
-        hbBtn2.getChildren().add(submit);
+        Button search = new Button("Search");
 
         Button close = new Button("Close");
-        HBox hbBtn3 = new HBox(10);
-        hbBtn3.setAlignment(Pos.CENTER);
-        hbBtn3.getChildren().add(close);
 
         HBox test = new HBox(15);
-        test.getChildren().addAll(back, submit, close);
+        test.getChildren().addAll(back, search, close);
         test.setMargin(back, new Insets(0, 0, 0, 20));
         add(test, 0, 4, 3, 1);
     }

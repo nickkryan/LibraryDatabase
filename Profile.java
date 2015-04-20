@@ -10,7 +10,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -86,11 +88,11 @@ public class Profile extends GridPane {
         address.setPrefColumnCount(email.getPrefColumnCount());
         address.setPrefRowCount(3);
         add(address, 1, 4, 1, 2);
-        
+
         departmentLabel = new Label("Associated Department");
         departmentLabel.setVisible(false);
         add(departmentLabel, 2, 4);
-        
+
         department = new ComboBox<String>();
         department.getItems().addAll("PUT DEPARTMENTS HERE");
         department.setVisible(false);
@@ -103,50 +105,22 @@ public class Profile extends GridPane {
         add(hbBtn2, 2, 6, 2, 1);
 
         final Text actionTarget = new Text();
-        add(actionTarget, 0, 6, 2, 1);
+        actionTarget.setFill(Color.FIREBRICK);
+        add(actionTarget, 2, 5, 2, 1);
 
         faculty.selectedProperty().addListener((obj, oldValue, newValue) -> {
             departmentLabel.setVisible(newValue);
             department.setVisible(newValue);
         });
-        
+
         submit.setOnAction((ActionEvent e) -> {
-            if (validInput()) {
-                System.out.println("All information valid!");
+            if (faculty.isSelected()
+                 && department.getSelectionModel().getSelectedItem() == null) {
+                actionTarget.setText("Please select a Department");
+            } else {
+                app.changeScene(SearchBooks.makeScene(app));
             }
         });
-    }
-
-    private boolean validInput() {
-        boolean valid = true;
-
-        if (firstname.getText().isEmpty()) {
-            valid = false;
-            firstname.setBorder(new Border(new BorderStroke(
-                Paint.valueOf("#FF0000"),
-                BorderStrokeStyle.SOLID,
-                new CornerRadii(0),
-                BorderStroke.DEFAULT_WIDTHS)));
-        }
-
-        if (lastname.getText().isEmpty()) {
-            valid = false;
-            lastname.setBorder(new Border(new BorderStroke(
-                Paint.valueOf("#FF0000"),
-                BorderStrokeStyle.SOLID,
-                new CornerRadii(0),
-                BorderStroke.DEFAULT_WIDTHS)));
-        }
-
-        if (email.getText().isEmpty()) {
-            valid = false;
-            email.setBorder(new Border(new BorderStroke(
-                Paint.valueOf("#FF0000"),
-                BorderStrokeStyle.SOLID,
-                new CornerRadii(0),
-                BorderStroke.DEFAULT_WIDTHS)));
-        }
-        return valid;
     }
 
     public static Scene makeScene(Main app) {
