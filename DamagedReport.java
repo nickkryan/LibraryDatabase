@@ -164,6 +164,7 @@ public class DamagedReport extends GridPane {
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
         add(hbBtnBack, 0, 10, 2, 1);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
     }
 
     public static Scene makeScene(Main app, String user) {

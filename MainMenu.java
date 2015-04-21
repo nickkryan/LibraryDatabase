@@ -63,6 +63,8 @@ public class MainMenu extends GridPane {
         userReport.setOnAction(e -> app.changeScene(FrequentUserReport.makeScene(app, user)));
         Button subReport = new Button("Popular Subject Report");
         subReport.setOnAction(e -> app.changeScene(PopularSubjectReport.makeScene(app, user)));
+        Button close = new Button("Close");
+        close.setOnAction(e -> System.exit(0));
 
         add(search, 0, 1);
         add(extension, 0, 2);
@@ -76,6 +78,7 @@ public class MainMenu extends GridPane {
         add(popReport, 1, 3);
         add(userReport, 1, 4);
         add(subReport, 1, 5);
+        add(close, 1, 6);
 
 
     }

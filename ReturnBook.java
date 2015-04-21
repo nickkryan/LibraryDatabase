@@ -104,7 +104,7 @@ public class ReturnBook extends GridPane {
         });
         add(hbSubmit, 2, 1, 2, 1);
 
-        Button returnBtn = new Button("Return");
+        Button returnBtn = new Button("Return Book");
         HBox hbBtn2 = new HBox(10);
         hbBtn2.setAlignment(Pos.CENTER);
         hbBtn2.getChildren().add(returnBtn);
@@ -128,6 +128,8 @@ public class ReturnBook extends GridPane {
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
         add(hbBtnBack, 0, 4, 2, 1);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
+
     }
 
     public static Scene makeScene(Main app, String user) {

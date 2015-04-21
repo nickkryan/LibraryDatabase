@@ -156,6 +156,8 @@ public class LostDamaged extends GridPane {
         hbBtnBack.setAlignment(Pos.CENTER);
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
+
         add(hbBtnBack, 0, 6, 2, 1);
     }
 

@@ -114,6 +114,13 @@ public class PopularSubjectReport extends GridPane {
             titles.get(i + 3).setText(febList.get(i).get(0));
             checkouts.get(i + 3).setText(febList.get(i).get(1));
         }
+        Button back = new Button("Back");
+        HBox hbBtnBack = new HBox(10);
+        hbBtnBack.setAlignment(Pos.CENTER);
+        hbBtnBack.getChildren().add(back);
+        hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
+        add(hbBtnBack, 0, 2, 3, 1);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
     }
 
     public static Scene makeScene(Main app, String user) {
