@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Database {
     private static final String conString =
@@ -146,6 +147,32 @@ public class Database {
             System.err.println("Exception: " + e.getMessage());
         }
         return null;
+    }
+
+    public static ArrayList<ArrayList<String>> frequentUsersReport() {
+        ArrayList<String> janList = new ArrayList<>();
+        ArrayList<String> febList = new ArrayList<>();
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con,"(SELECT MONTH(Date_Of_Issue), COUNT(User_Username), User_Username FROM Issues WHERE MONTH(Date_Of_Issue) = 1 GROUP BY User_Username HAVING COUNT(User_Username) > 10)" +
+                    "UNION" +
+                    "(SELECT MONTH(Date_Of_Issue), COUNT(User_Username), User_Username FROM Issues WHERE MONTH(Date_Of_Issue) = 2 GROUP BY User_Username HAVING COUNT(User_Username) > 10)");
+            ResultSet rs = ps.executeQuery();) {
+            while (rs.next()) {
+                if (rs.getString(1).equals("1")) {
+                    janList.add(rs.getString(3) + "     " + rs.getString(2));
+                } else {
+                    febList.add(rs.getString(3) + "     " + rs.getString(2));
+                }
+            }
+            } catch (Exception e) {
+                System.err.println("Exception: " + e.getMessage());
+            }
+        ArrayList<ArrayList<String>> both = new ArrayList<>();
+        both.add(janList);
+        both.add(febList);
+        return both;
     }
 
 
