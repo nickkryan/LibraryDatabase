@@ -24,7 +24,7 @@ public class Return extends GridPane {
     private TextField issue_id, isbn, copyNum, username;
     private CheckBox damaged;
 
-    public Return(Main app) {
+    public Return(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -90,8 +90,8 @@ public class Return extends GridPane {
         add(hbBtnBack, 0, 4, 2, 1);
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new Return(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new Return(app, user));
     }
 }
 

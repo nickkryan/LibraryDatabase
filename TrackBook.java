@@ -23,7 +23,7 @@ public class TrackBook extends GridPane {
 
     private TextField isbn, floorNum, shelfNum, aisleNum, subject;
 
-    public TrackBook(Main app) {
+    public TrackBook(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -80,10 +80,12 @@ public class TrackBook extends GridPane {
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
         add(hbBtnBack, 0, 4, 2, 1);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
+
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new TrackBook(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new TrackBook(app, user));
     }
 }
 

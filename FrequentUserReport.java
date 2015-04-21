@@ -34,7 +34,7 @@ public class FrequentUserReport extends GridPane {
     private ObservableList<String> janViewList, febViewList;
     private Integer selected;
 
-    public FrequentUserReport(Main app) {
+    public FrequentUserReport(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -81,8 +81,8 @@ public class FrequentUserReport extends GridPane {
         add(hbBtnBack, 0, 4);
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new FrequentUserReport(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new FrequentUserReport(app, user));
     }
 
 

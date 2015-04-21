@@ -20,7 +20,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
 
-public class PopularSubjectReport extends GridPane {
+public class PopularReport extends GridPane {
     private final Main app;
 
     private Label title1, title2, title3,
@@ -29,7 +29,7 @@ public class PopularSubjectReport extends GridPane {
             checkout4, checkout5, checkout6;
 
 
-    public PopularSubjectReport(Main app, String user) {
+    public PopularReport(Main app) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -37,14 +37,14 @@ public class PopularSubjectReport extends GridPane {
         setVgap(10);
         setPadding(new Insets(15, 15, 15, 15));
 
-        Label mainTitle = new Label("Popular Subject Report");
+        Label mainTitle = new Label("Popular Books Report");
         HBox hbMainTitle = new HBox();
         hbMainTitle.setAlignment(Pos.CENTER);
         hbMainTitle.getChildren().add(mainTitle);
         add(hbMainTitle, 0, 0, 3, 1);
 
         Label month = new Label("Month");
-        Label title = new Label("Top Subject");
+        Label title = new Label("Title");
         Label checkout = new Label("Checkouts");
         Label jan = new Label("January");
         Label feb = new Label("February");
@@ -81,16 +81,32 @@ public class PopularSubjectReport extends GridPane {
         vbCheckout.getChildren().addAll(checkout, checkout1, checkout2, checkout3,
                                      checkout4, checkout5, checkout6);
 
-
+        // add(title1, 2, 2);
+        // add(title2, 2, 3);
+        // add(title3, 2, 4);
+        // add(title4, 2, 5);
+        // add(title5, 2, 6);
+        // add(title6, 2, 7);
         add(vbTitle, 1, 1);
         add(vbCheckout, 2, 1);
-
-
+        // add(checkout1, 3, 2);
+        // add(checkout2, 3, 3);
+        // add(checkout3, 3, 4);
+        // add(checkout4, 3, 5);
+        // add(checkout5, 3, 6);
+        // add(checkout6, 3, 7);
+        Button back = new Button("Back");
+        HBox hbBtnBack = new HBox(10);
+        hbBtnBack.setAlignment(Pos.CENTER);
+        hbBtnBack.getChildren().add(back);
+        hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
+        add(hbBtnBack, 0, 2, 2, 1);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
 
     }
 
-    public static Scene makeScene(Main app, String user) {
-        return new Scene(new PopularSubjectReport(app, user));
+    public static Scene makeScene(Main app) {
+        return new Scene(new PopularReport(app));
     }
 }
 

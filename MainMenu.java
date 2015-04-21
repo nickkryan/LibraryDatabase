@@ -33,39 +33,51 @@ public class MainMenu extends GridPane {
         setVgap(10);
         setPadding(new Insets(15, 15, 15, 15));
 
-        Label mainTitle = new Label("Search Books");
+        Label mainTitle = new Label(user + "'s Main Menu");
         HBox hbMainTitle = new HBox();
         hbMainTitle.setAlignment(Pos.CENTER);
         hbMainTitle.getChildren().add(mainTitle);
-        add(hbMainTitle, 0, 0, 3, 1);
+        add(hbMainTitle, 0, 0, 2, 1);
 
-        Label isbnLabel = new Label("ISBN");
-        isbn = new TextField();
-        add(isbnLabel, 0, 1);
-        add(isbn, 1, 1);
-
-        Label titleLabel = new Label("Title");
-        title = new TextField();
-        add(titleLabel, 0, 2);
-        add(title, 1, 2);
-
-        Label authorLabel = new Label("Author");
-        author = new TextField();
-        add(authorLabel, 0, 3);
-        add(author, 1, 3);
-
-
-        Button back = new Button("Back");
 
         Button search = new Button("Search");
+        search.setOnAction(e -> app.changeScene(SearchBooks.makeScene(app, user)));
+        Button extension = new Button("Request Extension");
+        extension.setOnAction(e -> app.changeScene(Extension.makeScene(app, user)));
+        Button futureHold = new Button("Future Hold Request");
+        futureHold.setOnAction(e -> app.changeScene(FutureHold.makeScene(app, user)));
+        Button track = new Button("Track Location");
+        track.setOnAction(e -> app.changeScene(TrackBook.makeScene(app, user)));
+        Button checkout = new Button("Checkout");
+        checkout.setOnAction(e -> app.changeScene(Checkout.makeScene(app, user)));
+        Button returnBook = new Button("Return");
+        returnBook.setOnAction(e -> app.changeScene(Return.makeScene(app, user)));
 
-        Button close = new Button("Close");
-        close.setOnAction(e -> System.exit(0));
+        Button lostDamaged = new Button("Lost/Damaged");
+        lostDamaged.setOnAction(e -> app.changeScene(LostDamaged.makeScene(app, user)));
+        Button damReport = new Button("Damaged Report");
+        damReport.setOnAction(e -> app.changeScene(DamagedReport.makeScene(app, user)));
+        Button popReport = new Button("Popular Book Report");
+        popReport.setOnAction(e -> app.changeScene(PopularBookReport.makeScene(app, user)));
+        Button userReport = new Button("Frequent User Report");
+        userReport.setOnAction(e -> app.changeScene(FrequentUserReport.makeScene(app, user)));
+        Button subReport = new Button("Popular Subject Report");
+        subReport.setOnAction(e -> app.changeScene(PopularSubjectReport.makeScene(app, user)));
 
-        HBox test = new HBox(15);
-        test.getChildren().addAll(back, search, close);
-        test.setMargin(back, new Insets(0, 0, 0, 20));
-        add(test, 0, 4, 3, 1);
+        add(search, 0, 1);
+        add(extension, 0, 2);
+        add(futureHold, 0, 3);
+        add(track, 0, 4);
+        add(checkout, 0, 5);
+        add(returnBook, 0, 6);
+
+        add(lostDamaged, 1, 1);
+        add(damReport, 1, 2);
+        add(popReport, 1, 3);
+        add(userReport, 1, 4);
+        add(subReport, 1, 5);
+
+
     }
 
     public static Scene makeScene(Main app, String user) {

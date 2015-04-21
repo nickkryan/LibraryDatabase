@@ -24,7 +24,7 @@ public class Checkout extends GridPane {
     private TextField issue_id, username, isbn, copyNum,
             checkoutDate, estReturnDate;
 
-    public Checkout(Main app) {
+    public Checkout(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -87,10 +87,11 @@ public class Checkout extends GridPane {
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
         add(hbBtnBack, 0, 4, 2, 1);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new Checkout(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new Checkout(app, user));
     }
 }
 

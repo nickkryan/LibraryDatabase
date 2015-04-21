@@ -29,7 +29,7 @@ public class PopularBookReport extends GridPane {
             checkout4, checkout5, checkout6;
 
 
-    public PopularBookReport(Main app) {
+    public PopularBookReport(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -95,12 +95,18 @@ public class PopularBookReport extends GridPane {
         // add(checkout4, 3, 5);
         // add(checkout5, 3, 6);
         // add(checkout6, 3, 7);
-
+        Button back = new Button("Back");
+        HBox hbBtnBack = new HBox(10);
+        hbBtnBack.setAlignment(Pos.CENTER);
+        hbBtnBack.getChildren().add(back);
+        hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
+        add(hbBtnBack, 0, 3, 2, 1);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
 
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new PopularBookReport(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new PopularBookReport(app, user));
     }
 }
 

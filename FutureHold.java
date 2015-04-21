@@ -23,7 +23,7 @@ public class FutureHold extends GridPane {
 
     private TextField isbn, copyNumber, expAvailableDate;
 
-    public FutureHold(Main app) {
+    public FutureHold(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -75,10 +75,12 @@ public class FutureHold extends GridPane {
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(30, 0, 0, 0));
         add(hbBtnBack, 0, 4);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
+
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new FutureHold(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new FutureHold(app, user));
     }
 }
 

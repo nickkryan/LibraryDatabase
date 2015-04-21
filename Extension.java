@@ -24,7 +24,7 @@ public class Extension extends GridPane {
     private TextField issue_id, checkoutDate, currExtension, newExtension,
         currReturn, estReturn;
 
-    public Extension(Main app) {
+    public Extension(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -89,10 +89,11 @@ public class Extension extends GridPane {
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(30, 0, 0, 0));
         add(hbBtnBack, 0, 5, 2, 1);
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new Extension(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new Extension(app, user));
     }
 }
 

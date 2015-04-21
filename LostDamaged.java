@@ -24,7 +24,7 @@ public class LostDamaged extends GridPane {
 
     private TextField isbn, copyNum, currentTime, lastUser, chargeAmount;
 
-    public LostDamaged(Main app) {
+    public LostDamaged(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -91,8 +91,8 @@ public class LostDamaged extends GridPane {
         add(hbBtnBack, 0, 6, 2, 1);
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new LostDamaged(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new LostDamaged(app, user));
     }
 }
 
