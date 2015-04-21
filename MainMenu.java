@@ -50,8 +50,8 @@ public class MainMenu extends GridPane {
         track.setOnAction(e -> app.changeScene(TrackBook.makeScene(app, user)));
         Button checkout = new Button("Checkout");
         checkout.setOnAction(e -> app.changeScene(Checkout.makeScene(app, user)));
-        Button returnBook = new Button("Return");
-        returnBook.setOnAction(e -> app.changeScene(Return.makeScene(app, user)));
+        Button returnBook = new Button("Return Book");
+        returnBook.setOnAction(e -> app.changeScene(ReturnBook.makeScene(app, user)));
 
         Button lostDamaged = new Button("Lost/Damaged");
         lostDamaged.setOnAction(e -> app.changeScene(LostDamaged.makeScene(app, user)));
