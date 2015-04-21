@@ -218,8 +218,13 @@ public class Database {
             "Is_Debarred = 0 AND Book_Isbn = ? AND Copy_Num = ? AND Is_Damaged = 0 AND ((Is_On_Hold = 0)" +
             " OR ((Is_On_Hold = 1) AND (DATEDIFF(?, Hold_Date) > 3)))",
                 currentDate, currentDate, isbn, copyNum, user, user, isbn, copyNum, currentDate);
-            ) {
+            
+            PreparedStatement bookSetPs = createPreparedStatement(con,
+                "UPDATE BookCopy SET Is_Checked_Out = 1, Is_On_Hold = 0 WHERE Book_Isbn = ? AND Copy_Num = ?",
+                isbn, copyNum);
+            ){
             int rs = ps.executeUpdate();
+            int bsResult = bookSetPs.executeUpdate();
         } catch (Exception e) {
             success = false;
             System.err.println("Exception: " + e.getMessage());
