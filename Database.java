@@ -32,9 +32,7 @@ public class Database {
             PreparedStatement ps = createPreparedStatement(
                 con, "INSERT INTO User VALUES (?, ?, false)",
                 user, pass);) {
-            int rs = ps.executeUpdate();
-            System.out.println(rs);
-            return rs == 1;
+            return 1 == ps.executeUpdate();
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
         }
@@ -371,6 +369,42 @@ public class Database {
         both.add(janList);
         both.add(febList);
         return both;
+    }
+
+    public static String lastUser(String isbn, String copyNum) {
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "SELECT I.User_Username FROM Issues I INNER JOIN ( "
+                    + "SELECT MAX(Issues.Return_Date) AS LastReturned FROM "
+                    + "Issues WHERE Book_Isbn = ? AND Book_Copy_Num = ?) "
+                    + "lastReturned ON lastReturned.LastReturned = I.Return_Date",
+                isbn, copyNum);
+            ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static boolean lostDamagedBook(String isbn, String copyNum, String username, String penalty) {
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "UPDATE StudentFaculty, BookCopy SET Is_Debarred = IF( "
+                    + "IFNULL(Penalty, 0) + ? >= 10000, 1, 0), "
+                    + "Penalty = IFNULL(Penalty, 0) + ?, Is_Damaged = 1 "
+                    + "WHERE StudentFaculty.Username = ? AND Book_Isbn = ? "
+                    + "AND Copy_Num = ?",
+                penalty, penalty, username, isbn, copyNum);) {
+            return 2 == ps.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return false;
     }
 
     private static PreparedStatement createPreparedStatement(Connection con, String sql, String ... args) throws SQLException {
