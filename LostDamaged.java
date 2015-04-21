@@ -74,6 +74,10 @@ public class LostDamaged extends GridPane {
         actionTarget.setFill(Color.FIREBRICK);
         add(actionTarget, 2, 2, 2, 1);
 
+        final Text actionTarget2 = new Text();
+        actionTarget2.setFill(Color.FIREBRICK);
+        add(actionTarget2, 2, 6, 1, 1);
+
         Label lastUserLabel = new Label("Last User of the Book");
         lastUser = new TextField();
         lastUser.setEditable(false);
@@ -133,6 +137,8 @@ public class LostDamaged extends GridPane {
                         && Integer.parseInt(penalty) > 0) {
                         if (Database.lostDamagedBook(isbnNum, copyNum2, username, penalty)) {
                             actionTarget.setText("");
+                            chargeAmount.setText("0");
+                            actionTarget2.setText("Success");
                         } else {
                             actionTarget.setText("Could not find book/user");
                         }
@@ -148,10 +154,9 @@ public class LostDamaged extends GridPane {
         hbBtn3.setMargin(submit, new Insets(15, 0, 0, 0));
         add(hbBtn3, 3, 6, 2, 1);
 
-        Button back = new Button("Back");
-        back.setOnAction(e -> {
 
-        });
+
+        Button back = new Button("Back");
         HBox hbBtnBack = new HBox(10);
         hbBtnBack.setAlignment(Pos.CENTER);
         hbBtnBack.getChildren().add(back);

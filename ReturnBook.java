@@ -117,6 +117,8 @@ public class ReturnBook extends GridPane {
                 app.changeScene(LostDamaged.makeScene(app, user));
             } else if (!result) {
                 actionTarget.setText("Error ocurred");
+            } else {
+                actionTarget.setText("Success");
             }
         });
         add(hbBtn2, 2, 4, 2, 1);
