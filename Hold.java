@@ -52,19 +52,16 @@ public class Hold extends GridPane {
         ArrayList<Book> reserved = new ArrayList<>();
 
         int longestString = 0;
-        System.out.println(books.size());
         for (int i = 0; i < books.size(); i++) {
             int temp = books.get(i).toString().length();
             if (temp > longestString) {
                 longestString = temp;
             }
             if (books.get(i).isReserved()) {
-                System.out.println(books.get(i));
                 reserved.add(books.get(i));
             }
         }
         books.removeAll(reserved);
-        System.out.println(books.size());
 
         availableBooks = FXCollections.observableArrayList(books);
         ListView<Book> listView = new ListView<Book>(availableBooks);
@@ -80,7 +77,7 @@ public class Hold extends GridPane {
 
         final Text actionTarget = new Text();
         actionTarget.setFill(Color.FIREBRICK);
-        add(actionTarget, 3, 6);
+        add(actionTarget, 1, 6);
 
         Label reservedDivide = new Label("Reserved Books\n");
         HBox divide = new HBox();
