@@ -12,12 +12,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-
+import javafx.scene.paint.Color;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.paint.Paint;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
+import java.util.HashMap;
 
 public class DamagedReport extends GridPane {
     private final Main app;
@@ -27,8 +28,22 @@ public class DamagedReport extends GridPane {
 
     private ComboBox<String> monthBox, subject1Box, subject2Box, subject3Box;
 
-    public DamagedReport(Main app) {
+    public DamagedReport(Main app, String user) {
         this.app = app;
+
+        HashMap<String, String> months = new HashMap<>();
+        months.put("January", "1");
+        months.put("February", "2");
+        months.put("March", "3");
+        months.put("April", "4");
+        months.put("May", "5");
+        months.put("June", "6");
+        months.put("July", "7");
+        months.put("August", "8");
+        months.put("September", "9");
+        months.put("October", "10");
+        months.put("November", "11");
+        months.put("December", "12");
 
         setAlignment(Pos.CENTER);
         setHgap(10);
@@ -99,9 +114,43 @@ public class DamagedReport extends GridPane {
         add(subject3, 0, 9);
         add(damagedNum3, 1, 9);
 
+        final Text actionTarget = new Text();
+        actionTarget.setFill(Color.FIREBRICK);
+        add(actionTarget, 0, 3);
 
+        final Text monthLabel = new Text();
+        final HBox monthLabelHBox = new HBox(10);
+        monthLabelHBox.setAlignment(Pos.CENTER);
+        monthLabelHBox.getChildren().add(monthLabel);
+        add(monthLabelHBox, 0, 5, 2, 1);
 
         Button showReport = new Button("Show Report");
+        showReport.setOnAction(e -> {
+            String month = monthBox.getSelectionModel().getSelectedItem();
+            String sub1 = subject1Box.getSelectionModel().getSelectedItem();
+            String sub2 = subject2Box.getSelectionModel().getSelectedItem();
+            String sub3 = subject3Box.getSelectionModel().getSelectedItem();
+            if (month == null || sub1 == null || sub2 == null || sub3 == null) {
+                actionTarget.setText("All fields are required");
+            } else if (sub1.equals(sub2) || sub1.equals(sub3) || sub2.equals(sub3)) {
+                actionTarget.setText("Subjects should be different");
+            } else {
+                HashMap<String, Integer> report = Database.damagedBookReport(months.get(month), sub1, sub2, sub3);
+                if (report != null) {
+                    actionTarget.setText("");
+                    monthLabel.setText(month);
+                    subject1.setText(sub1);
+                    damagedNum1.setText("" + report.get(sub1));
+                    subject2.setText(sub2);
+                    damagedNum2.setText("" + report.get(sub2));
+                    subject3.setText(sub3);
+                    damagedNum3.setText("" + report.get(sub3));
+                } else {
+                    actionTarget.setText("Error occured, try again!");
+                }
+            }
+        });
+
         HBox reportBtn = new HBox(10);
         reportBtn.setAlignment(Pos.CENTER);
         reportBtn.getChildren().add(showReport);
@@ -109,6 +158,7 @@ public class DamagedReport extends GridPane {
         add(reportBtn, 0, 4, 2, 1);
 
         Button back = new Button("Back");
+        back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
         HBox hbBtnBack = new HBox(10);
         hbBtnBack.setAlignment(Pos.CENTER);
         hbBtnBack.getChildren().add(back);
@@ -116,8 +166,8 @@ public class DamagedReport extends GridPane {
         add(hbBtnBack, 0, 10, 2, 1);
     }
 
-    public static Scene makeScene(Main app) {
-        return new Scene(new DamagedReport(app));
+    public static Scene makeScene(Main app, String user) {
+        return new Scene(new DamagedReport(app, user));
     }
 }
 
