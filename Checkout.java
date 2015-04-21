@@ -73,6 +73,16 @@ public class Checkout extends GridPane {
         add(estReturnDateLabel, 2, 3);
         add(estReturnDate, 3, 3);
 
+        Button submit = new Button("Submit Isbn");
+        HBox hbBtn3 = new HBox(10);
+        hbBtn3.setAlignment(Pos.CENTER);
+        hbBtn3.getChildren().add(submit);
+        hbBtn3.setMargin(submit, new Insets(15, 0, 0, 0));
+        submit.setOnAction(e -> {
+            String[] info = Database.checkoutBookInfo(issue_id.getText());
+        });
+        add(hbBtn3, 3, 4, 2, 1);
+
 
         Button locate = new Button("Confirm");
         HBox hbBtn2 = new HBox(10);

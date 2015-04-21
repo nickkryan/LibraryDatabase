@@ -186,6 +186,27 @@ public class Database {
         return issueInfo;
     }
 
+    public static String[] checkoutBookInfo(String issueId) {
+        String[] issueInfo = new String[3];
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "SELECT I.User_Username, I.Book_Isbn, I.Book_Copy_Num, I.Return_Date" +
+                " From Issues as I WHERE I.Issue_ID = ?",
+                issueId);
+            ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                issueInfo[0] = rs.getString(1);
+                issueInfo[1] = rs.getString(2);
+                issueInfo[2] = rs.getString(3);
+                issueInfo[3] = rs.getString(4);
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return issueInfo;
+    }
+
     public static boolean returnBookAndSetPenalties(String isDamaged,
             String user, String isbn, String copyNum) {
         boolean success = true;
@@ -206,7 +227,6 @@ public class Database {
             System.err.println("Exception: " + e.getMessage());
         }
         return success;
-
     }
 
     public static HashMap<String, Integer> damagedBookReport(String month, String sub1, String sub2, String sub3) {
