@@ -13,6 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
 
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
@@ -77,6 +78,10 @@ public class Hold extends GridPane {
         reservedView.setPrefWidth(longestString*7);
         add(reservedView, 0, 4, 3, 1);
 
+        final Text actionTarget = new Text();
+        actionTarget.setFill(Color.FIREBRICK);
+        add(actionTarget, 3, 6);
+
         Label reservedDivide = new Label("Reserved Books\n");
         HBox divide = new HBox();
         divide.setAlignment(Pos.CENTER);
@@ -93,7 +98,16 @@ public class Hold extends GridPane {
 
         submit.setOnAction((ActionEvent e) -> {
             selected = listView.getSelectionModel().getSelectedItem();
-            System.out.println(selected);
+            String copyNum = Database.copyNumOfHoldRequest(String.valueOf(selected.getIsbn()));
+            boolean result = false;
+            if (copyNum != null) {
+                result = Database.requestHoldUpdateDb(String.valueOf(selected.getIsbn()), copyNum, username);
+            }
+            if (result) {
+                actionTarget.setText("Copy number " + copyNum + "hold request submit.");
+            } else {
+                actionTarget.setText("Hold request failed.");
+            }
         });
 
         Button close = new Button("Close");

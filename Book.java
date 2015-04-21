@@ -10,8 +10,11 @@ public class Book {
 	private int copyrightYear;
 	private int shelfNum;
 	private String subjectName;
+	private int numAvailableCopies;
 
-	public Book(int isbn, String title, int cost, boolean isReserved, int edition, String publisher, String publisherLocation, int copyrightYear, int shelfNum, String subjectName) {
+	public Book(int isbn, String title, int cost, boolean isReserved, int edition,
+		String publisher, String publisherLocation, int copyrightYear, int shelfNum,
+		String subjectName, int numAvailableCopies) {
 		this.setIsbn(isbn);
 		this.setTitle(title);
 		this.cost = cost;
@@ -22,6 +25,31 @@ public class Book {
 		this.copyrightYear = copyrightYear;
 		this.shelfNum = shelfNum;
 		this.setSubjectName(subjectName);
+		this.numAvailableCopies = numAvailableCopies;
+	}
+
+	public Book(int isbn, String title, int cost, boolean isReserved, int edition,
+		String publisher, String publisherLocation, int copyrightYear, int shelfNum,
+		String subjectName) {
+		this.setIsbn(isbn);
+		this.setTitle(title);
+		this.cost = cost;
+		this.isReserved = isReserved;
+		this.edition = edition;
+		this.publisher = publisher;
+		this.publisherLocation = publisherLocation;
+		this.copyrightYear = copyrightYear;
+		this.shelfNum = shelfNum;
+		this.setSubjectName(subjectName);
+		this.numAvailableCopies = -1;
+	}
+
+	public int getNumAvailableCopies() {
+		return numAvailableCopies;
+	}
+
+	public void setNumAvailableCopies(int numAvailableCopies) {
+		this.numAvailableCopies = numAvailableCopies;
 	}
 
 	public String toString() {
