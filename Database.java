@@ -507,6 +507,77 @@ public class Database {
         return false;
     }
 
+    public static String[] requestExtension(String id) {
+        String newDate = extensionNewDate(id);
+        String[] result = new String[5];
+        System.out.println(newDate);
+        if (newDate == null) return null;
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "SELECT I.Date_Of_Issue, I.Extension_Date, I.Expected_Return_Date," +
+                " CURDATE() AS New_Extension_Date, ? AS New_Estimated_Return_Date" +
+                " FROM Issues AS I, BookCopy AS B WHERE I.Issue_ID = ? AND " +
+                "B.Is_Checked_Out = 1",
+                    newDate, id);
+            ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                result[0] = rs.getString(1); //date of issue
+                result[1] = rs.getString(2); //extension date
+                result[2] = rs.getString(3); //expected return
+                result[3] = rs.getString(4); //new extension
+                result[4] = rs.getString(5); //new est_return
+                return result;
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    public static boolean updateExtensionDate(String id, String newDate) {
+        System.out.println(id + " " + newDate);
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "UPDATE Issues, BookCopy, StudentFaculty SET Issues.Count_Of_Extensions = " +
+                "Issues.Count_Of_Extensions +1, Issues.Extension_Date = CURDATE(), Issues.Expected_Return_Date = " +
+                "? WHERE Issues.User_Username IN (SELECT Username FROM StudentFaculty WHERE Issues.Issue_ID = ? " +
+                    "AND Issues.User_Username = StudentFaculty.Username AND Issues.Count_Of_Extensions < 2 AND " +
+                    "StudentFaculty.Is_Faculty = 0) OR Issues.User_Username IN (SELECT Username FROM StudentFaculty " +
+                    "WHERE Issues.Issue_ID = ? AND Issues.User_Username = StudentFaculty.Username AND Issues.Count_Of_Extensions < 5 " +
+                    "AND StudentFaculty.Is_Faculty = 1) AND Issues.Issue_ID = ? AND Issues.Book_Copy_Num AND Issues.Book_Isbn IN " +
+                "(SELECT Book_Isbn AND Copy_Num FROM BookCopy WHERE Is_On_Hold = 0)",
+                    newDate, id, id, id);) {
+            return 3 == ps.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public static String extensionNewDate(String id) {
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, " (SELECT DATE_ADD(CURDATE() , INTERVAL 28 DAY) AS New_Date" +
+                     " From Issues INNER JOIN StudentFaculty ON Issues.User_Username " +
+                     "= StudentFaculty.Username WHERE Issue_Id = ? AND Is_Faculty" +
+                     " = 0) UNION (SELECT DATE_ADD(CURDATE() , INTERVAL 56 DAY) AS New_Date" +
+                     " From Issues INNER JOIN StudentFaculty ON Issues.User_Username = StudentFaculty.Username" +
+                     " WHERE Issue_Id = ? AND Is_Faculty = 1)",
+                    id, id);
+            ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return null;
+    }
+
     private static PreparedStatement createPreparedStatement(Connection con, String sql, String ... args) throws SQLException {
         PreparedStatement ps = con.prepareStatement(sql);
         for (int i = 0; i < args.length; i++) {
