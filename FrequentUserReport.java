@@ -53,14 +53,14 @@ public class FrequentUserReport extends GridPane {
         add(jan, 0, 2);
         add(feb, 0, 3);
 
-        Label username = new Label("Frequent User Report");
+        Label username = new Label("Username Number of Checkouts");
         // Label checkouts = new Label("Number of Checkouts");
         add(username, 1, 1);
         // add(checkouts, 2, 1);
 
-        ArrayList[] qResult = Database.frequentUsersReport();
-        ArrayList<String> janList = qResult[0];
-        ArrayList<String> febList = qResult[1];
+        ArrayList<ArrayList<String>> qResult = Database.frequentUsersReport();
+        ArrayList<String> janList = qResult.get(0);
+        ArrayList<String> febList = qResult.get(1);
 
 
 

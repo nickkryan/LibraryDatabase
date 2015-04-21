@@ -237,7 +237,7 @@ public class Database {
         boolean success = true;
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
-            PreparedStatement ps = createPreparedStatement(con,
+            PreparedStatement ps = createPreparedStatement(con, 
                 "UPDATE StudentFaculty, Issues, BookCopy SET Penalty = IFNULL(Penalty, 0) + " +
                 "(DATEDIFF(CURDATE(), Expected_Return_Date) * 50), Is_Debarred = IF(IFNULL(Penalty, " +
                 "0) + (DATEDIFF(CURDATE(), Expected_Return_Date) * 50) >= 10000, 1, 0), Return_Date =" +
@@ -296,7 +296,7 @@ public class Database {
         return null;
     }
 
-    public static ArrayList[] frequentUsersReport() {
+    public static ArrayList<ArrayList<String>> frequentUsersReport() {
         ArrayList<String> janList = new ArrayList<>();
         ArrayList<String> febList = new ArrayList<>();
         try (Connection con = DriverManager.getConnection(conString,
@@ -316,7 +316,9 @@ public class Database {
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
         }
-        ArrayList[] both = {janList, febList};
+        ArrayList<ArrayList<String>> both = new ArrayList<>();
+        both.add(janList);
+        both.add(febList);
         return both;
     }
 
