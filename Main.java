@@ -10,7 +10,7 @@ public class Main extends Application {
     public void start(Stage stage) {
         this.stage = stage;
         stage.setTitle("GT LMS - Group 25");
-        stage.setScene(PopularBookReport.makeScene(this, "test"));
+        stage.setScene(Login.makeScene(this));
         stage.show();
     }
 
