@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
 
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -67,11 +68,40 @@ public class ReturnBook extends GridPane {
         hbDamaged.getChildren().addAll(damagedLabel, damaged);
         add(hbDamaged, 0, 3, 2, 1);
 
+        final Text actionTarget = new Text();
+        actionTarget.setFill(Color.FIREBRICK);
+        add(actionTarget, 3, 5);
+
         Button submitBtn = new Button("Submit");
         HBox hbSubmit = new HBox(10);
         hbSubmit.setAlignment(Pos.CENTER);
         hbSubmit.getChildren().add(submitBtn);
         hbSubmit.setMargin(submitBtn, new Insets(0, 0, 0, 0));
+        submitBtn.setOnAction(e -> {
+            if (!issue_id.getText().equals("") && Integer.parseInt(issue_id.getText()) > 0) {
+                String[] info = Database.returnBookInfo(issue_id.getText());
+                username.setText(info[0]);
+                isbn.setText(info[1]);
+                copyNum.setText(info[2]);
+                if (info[3] != null) {
+                    actionTarget.setText("Book has already been returned!");
+                } else {
+                    actionTarget.setText("");
+                }
+            } else if (issue_id.getText().equals("")) {
+                actionTarget.setText("Need issue id!");
+                username.setText("");
+                copyNum.setText("");
+                isbn.setText("");
+                damaged.setSelected(false);
+            } else {
+                actionTarget.setText("Invalid issue id!");
+                username.setText("");
+                copyNum.setText("");
+                isbn.setText("");
+                damaged.setSelected(false);
+            }
+        });
         add(hbSubmit, 2, 1, 2, 1);
 
         Button returnBtn = new Button("Return");
@@ -79,6 +109,16 @@ public class ReturnBook extends GridPane {
         hbBtn2.setAlignment(Pos.CENTER);
         hbBtn2.getChildren().add(returnBtn);
         hbBtn2.setMargin(returnBtn, new Insets(15, 0, 0, 0));
+        returnBtn.setOnAction(e -> {
+            String isDamaged = (damaged.isSelected() ? "1" : "0");
+            boolean result = Database.returnBookAndSetPenalties(isDamaged,
+                username.getText(), isbn.getText(), copyNum.getText());
+            if (result) {
+                actionTarget.setText("Successfully returned!");
+            } else {
+                actionTarget.setText("Error ocurred");
+            }
+        });
         add(hbBtn2, 2, 4, 2, 1);
 
 

@@ -165,6 +165,50 @@ public class Database {
         return location;
     }
 
+    public static String[] returnBookInfo(String issueId) {
+        String[] issueInfo = new String[4];
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "SELECT I.User_Username, I.Book_Isbn, I.Book_Copy_Num, I.Return_Date" +
+                " From Issues as I WHERE I.Issue_ID = ?",
+                issueId);
+            ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                issueInfo[0] = rs.getString(1);
+                issueInfo[1] = rs.getString(2);
+                issueInfo[2] = rs.getString(3);
+                issueInfo[3] = rs.getString(4);
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return issueInfo;
+    }
+
+    public static boolean returnBookAndSetPenalties(String isDamaged,
+            String user, String isbn, String copyNum) {
+        boolean success = true;
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(con, 
+                "UPDATE StudentFaculty, Issues, BookCopy SET Penalty = IFNULL(Penalty, 0) + " +
+                "(DATEDIFF(CURDATE(), Expected_Return_Date) * 50), Is_Debarred = IF(IFNULL(Penalty, " +
+                "0) + (DATEDIFF(CURDATE(), Expected_Return_Date) * 50) >= 10000, 1, 0), Return_Date =" +
+                "CURDATE(), Is_Checked_Out = 0, Is_Damaged = ? WHERE Username = ? AND Issues.Book_Isbn = ? " +
+                "AND BookCopy.Book_Isbn = ? AND Issues.Book_Isbn = BookCopy.Book_Isbn " +
+                "AND Book_Copy_Num = ? AND Copy_Num = ? AND Return_Date IS NULL AND " +
+                "User_Username = ? AND Is_Checked_Out = 1", isDamaged, user, isbn, isbn, copyNum, copyNum, user);
+            ) {
+            int rs = ps.executeUpdate();
+        } catch (Exception e) {
+            success = false;
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return success;
+
+    }
+
     public static HashMap<String, Integer> damagedBookReport(String month, String sub1, String sub2, String sub3) {
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
