@@ -20,6 +20,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
 
+import java.util.ArrayList;
+
 public class PopularBookReport extends GridPane {
     private final Main app;
 
@@ -65,36 +67,42 @@ public class PopularBookReport extends GridPane {
         title4 = new Label("");
         title5 = new Label("");
         title6 = new Label("");
+        ArrayList<Label> titles = new ArrayList<>();
+        titles.add(title1);
+        titles.add(title2);
+        titles.add(title3);
+        titles.add(title4);
+        titles.add(title5);
+        titles.add(title6);
+
+
+        VBox vbTitle = new VBox();
+        vbTitle.setAlignment(Pos.CENTER);
+        vbTitle.getChildren().addAll(title, title1, title2, title3,
+                                     title4, title5, title6);
+
         checkout1 = new Label("");
         checkout2 = new Label("");
         checkout3 = new Label("");
         checkout4 = new Label("");
         checkout5 = new Label("");
         checkout6 = new Label("");
-        VBox vbTitle = new VBox();
-        vbTitle.setAlignment(Pos.CENTER);
-        vbTitle.getChildren().addAll(title, title1, title2, title3,
-                                     title4, title5, title6);
+        ArrayList<Label> checkouts = new ArrayList<>();
+        checkouts.add(checkout1);
+        checkouts.add(checkout2);
+        checkouts.add(checkout3);
+        checkouts.add(checkout4);
+        checkouts.add(checkout5);
+        checkouts.add(checkout6);
 
         VBox vbCheckout = new VBox();
         vbCheckout.setAlignment(Pos.CENTER);
         vbCheckout.getChildren().addAll(checkout, checkout1, checkout2, checkout3,
                                      checkout4, checkout5, checkout6);
 
-        // add(title1, 2, 2);
-        // add(title2, 2, 3);
-        // add(title3, 2, 4);
-        // add(title4, 2, 5);
-        // add(title5, 2, 6);
-        // add(title6, 2, 7);
-        add(vbTitle, 1, 1);
-        add(vbCheckout, 2, 1);
-        // add(checkout1, 3, 2);
-        // add(checkout2, 3, 3);
-        // add(checkout3, 3, 4);
-        // add(checkout4, 3, 5);
-        // add(checkout5, 3, 6);
-        // add(checkout6, 3, 7);
+        add(vbTitle, 2, 1);
+        add(vbCheckout, 3, 1);
+
         Button back = new Button("Back");
         HBox hbBtnBack = new HBox(10);
         hbBtnBack.setAlignment(Pos.CENTER);
@@ -103,6 +111,17 @@ public class PopularBookReport extends GridPane {
         add(hbBtnBack, 0, 3, 2, 1);
         back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
 
+        ArrayList<ArrayList<ArrayList<String>>> qResult = Database.popularBookReport();
+        ArrayList<ArrayList<String>> janList = qResult.get(0);
+        for (int i = 0; i < Math.min(janList.size(), 3); i++) {
+            titles.get(i).setText(janList.get(i).get(0));
+            checkouts.get(i).setText(janList.get(i).get(1));
+        }
+        ArrayList<ArrayList<String>> febList = qResult.get(1);
+        for (int i = 0; i < Math.min(febList.size(), 3); i++) {
+            titles.get(i + 3).setText(febList.get(i).get(0));
+            checkouts.get(i + 3).setText(febList.get(i).get(1));
+        }
     }
 
     public static Scene makeScene(Main app, String user) {
