@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
 
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -66,12 +67,40 @@ public class TrackBook extends GridPane {
         add(subjectLabel, 2, 3);
         add(subject, 3, 3);
 
+        final Text actionTarget = new Text();
+        actionTarget.setFill(Color.FIREBRICK);
+        add(actionTarget, 2, 4);
+
 
         Button locate = new Button("Locate");
         HBox hbBtn2 = new HBox(10);
         hbBtn2.setAlignment(Pos.CENTER);
         hbBtn2.getChildren().add(locate);
         hbBtn2.setMargin(locate, new Insets(0, 0, 0, 0));
+        locate.setOnAction(e -> {
+            
+            if (!isbn.getText().equals("") && Integer.parseInt(isbn.getText()) > 0) {
+                String[] info = Database.trackLocation(isbn.getText());
+                shelfNum.setText(info[0]);
+                subject.setText(info[1]);
+                aisleNum.setText(info[2]);
+                floorNum.setText(info[3]);
+                actionTarget.setText("");
+            } else if (isbn.getText().equals("")) {
+                actionTarget.setText("Need book isbn!");
+                shelfNum.setText("");
+                subject.setText("");
+                aisleNum.setText("");
+                floorNum.setText("");
+            } else {
+                actionTarget.setText("Invalid isbn!");
+                shelfNum.setText("");
+                subject.setText("");
+                aisleNum.setText("");
+                floorNum.setText("");
+            }
+
+        });
         add(hbBtn2, 2, 1, 2, 1);
 
         Button back = new Button("Back");
@@ -79,6 +108,9 @@ public class TrackBook extends GridPane {
         hbBtnBack.setAlignment(Pos.CENTER);
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(15, 0, 0, 0));
+        back.setOnAction(e -> {
+            app.changeScene(MainMenu.makeScene(app, user));
+        });
         add(hbBtnBack, 0, 4, 2, 1);
         back.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
 

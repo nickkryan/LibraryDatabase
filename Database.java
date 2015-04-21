@@ -144,6 +144,27 @@ public class Database {
         return resultBooks;
     }
 
+    public static String[] trackLocation(String bookIsbn) {
+        String[] location = new String[4];
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "SELECT B.Shelf_Num, B.Subject_Name, S.Aisle_Num, S.Floor_Num " +
+                "From Shelf as S, Book as B WHERE S.Shelf_Num = B.Shelf_Num AND B.Isbn = ?",
+                bookIsbn);
+            ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                location[0] = rs.getString(1);
+                location[1] = rs.getString(2);
+                location[2] = rs.getString(3);
+                location[3] = rs.getString(4);
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return location;
+    }
+
     public static HashMap<String, Integer> damagedBookReport(String month, String sub1, String sub2, String sub3) {
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
