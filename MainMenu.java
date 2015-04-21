@@ -11,22 +11,20 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import javafx.scene.paint.Color;
+
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.paint.Paint;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
 
-import java.util.ArrayList;
-
-public class SearchBooks extends GridPane {
+public class MainMenu extends GridPane {
     private final Main app;
     private final String user;
 
     private TextField isbn, title, author;
 
-    public SearchBooks(Main app, String user) {
+    public MainMenu(Main app, String user) {
         this.app = app;
         this.user = user;
 
@@ -56,50 +54,22 @@ public class SearchBooks extends GridPane {
         add(authorLabel, 0, 3);
         add(author, 1, 3);
 
-        final Text actionTarget = new Text();
-        actionTarget.setFill(Color.FIREBRICK);
-        add(actionTarget, 0, 4, 2, 1);
 
-        Button menu = new Button("Menu");
-        menu.setOnAction(e -> app.changeScene(MainMenu.makeScene(app, user)));
+        Button back = new Button("Back");
 
         Button search = new Button("Search");
-        search.setOnAction(e -> {
-            ArrayList<Integer> bookIsbns = new ArrayList<Integer>();
-            if (!isbn.getText().equals("")) {
-                try {
-                    int ISBN = Integer.parseInt(isbn.getText());
-                    if (ISBN > 0) {
-                        ISBN = Database.searchISBN(isbn.getText());
-                        if (ISBN == -1) {
-                            actionTarget.setText("Invalid ISBN");
-                        } else {
-                            bookIsbns.add(ISBN);
-                        }
-                    } else {
-                        actionTarget.setText("Invalid ISBN");
-                    }
-                } catch (Exception f) {
-                    actionTarget.setText("Invalid ISBN");
-                }
-            } else if (!title.getText().equals("")) {
-
-            } else if (!author.getText().equals("")) {
-
-            }
-        });
 
         Button close = new Button("Close");
         close.setOnAction(e -> System.exit(0));
 
         HBox test = new HBox(15);
-        test.getChildren().addAll(menu, search, close);
-        test.setMargin(menu, new Insets(0, 0, 0, 20));
-        add(test, 0, 5, 3, 1);
+        test.getChildren().addAll(back, search, close);
+        test.setMargin(back, new Insets(0, 0, 0, 20));
+        add(test, 0, 4, 3, 1);
     }
 
     public static Scene makeScene(Main app, String user) {
-        return new Scene(new SearchBooks(app, user));
+        return new Scene(new MainMenu(app, user));
     }
 }
 
