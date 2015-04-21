@@ -271,6 +271,44 @@ public class Database {
         return both;
     }
 
+    public static ArrayList<ArrayList<ArrayList<String>>> popularSubjectReport() {
+        ArrayList<ArrayList<String>> janList = new ArrayList<>();
+        ArrayList<ArrayList<String>> febList = new ArrayList<>();
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con,"(SELECT MONTH(Date_Of_Issue), Subject_Name, Count(Isbn) "
+                + "FROM Issues INNER JOIN Book ON Book.Isbn = Issues.Book_Isbn "
+                + "Where MONTH(Date_Of_Issue) = 1 AND Isbn IN (SELECT Isbn FROM Issues GROUP BY Isbn) "
+                + "GROUP BY Isbn Limit 3) "
+                + "UNION "
+                + "(SELECT MONTH(Date_Of_Issue), Subject_Name, Count(Isbn) "
+                + "FROM Issues INNER JOIN Book ON Book.Isbn = Issues.Book_Isbn "
+                + "Where MONTH(Date_Of_Issue) = 2 AND Isbn IN (SELECT Isbn FROM Issues GROUP BY Isbn) "
+                + "GROUP BY Isbn Limit 3)");
+            ResultSet rs = ps.executeQuery();) {
+            while (rs.next()) {
+                if (rs.getString(1).equals("1")) {
+                    ArrayList<String> temp = new ArrayList<String>();
+                    temp.add(rs.getString(2));
+                    temp.add(rs.getString(3));
+                    janList.add(temp);
+                } else {
+                    ArrayList<String> temp = new ArrayList<String>();
+                    temp.add(rs.getString(2));
+                    temp.add(rs.getString(3));
+                    febList.add(temp);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        ArrayList<ArrayList<ArrayList<String>>> both = new ArrayList<>();
+        both.add(janList);
+        both.add(febList);
+        return both;
+    }
+
     private static PreparedStatement createPreparedStatement(Connection con, String sql, String ... args) throws SQLException {
         PreparedStatement ps = con.prepareStatement(sql);
         for (int i = 0; i < args.length; i++) {
