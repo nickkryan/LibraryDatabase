@@ -18,13 +18,13 @@ import javafx.scene.paint.Paint;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
 
-public class Return extends GridPane {
+public class ReturnBook extends GridPane {
     private final Main app;
 
     private TextField issue_id, isbn, copyNum, username;
     private CheckBox damaged;
 
-    public Return(Main app, String user) {
+    public ReturnBook(Main app, String user) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -91,7 +91,7 @@ public class Return extends GridPane {
     }
 
     public static Scene makeScene(Main app, String user) {
-        return new Scene(new Return(app, user));
+        return new Scene(new ReturnBook(app, user));
     }
 }
 
