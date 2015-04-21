@@ -138,7 +138,7 @@ public class LostDamaged extends GridPane {
                         }
                     }
                 } catch (Exception f) {
-                    actionTarget.setText("Invalid ISBN/Copy #");
+                    actionTarget.setText("Invalid Amount or ISBN/Copy #");
                 }
             }
         });

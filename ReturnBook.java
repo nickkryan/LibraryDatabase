@@ -113,9 +113,9 @@ public class ReturnBook extends GridPane {
             String isDamaged = (damaged.isSelected() ? "1" : "0");
             boolean result = Database.returnBookAndSetPenalties(isDamaged,
                 username.getText(), isbn.getText(), copyNum.getText());
-            if (result) {
-                actionTarget.setText("Successfully returned!");
-            } else {
+            if (result && damaged.isSelected()) {
+                app.changeScene(LostDamaged.makeScene(app, user));
+            } else if (!result) {
                 actionTarget.setText("Error ocurred");
             }
         });

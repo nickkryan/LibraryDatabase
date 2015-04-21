@@ -211,14 +211,14 @@ public class Database {
         boolean success = true;
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
-            
+
             PreparedStatement ps = createPreparedStatement(con,
                 "INSERT INTO Issues SELECT 0, ?, NULL, DATE_ADD(?, INTERVAL 14 DAY), NULL, 0, " +
             "?, ?, ? FROM StudentFaculty, BookCopy WHERE Username = ? AND " +
             "Is_Debarred = 0 AND Book_Isbn = ? AND Copy_Num = ? AND Is_Damaged = 0 AND ((Is_On_Hold = 0)" +
             " OR ((Is_On_Hold = 1) AND (DATEDIFF(?, Hold_Date) > 3)))",
                 currentDate, currentDate, isbn, copyNum, user, user, isbn, copyNum, currentDate);
-            
+
             PreparedStatement bookSetPs = createPreparedStatement(con,
                 "UPDATE BookCopy SET Is_Checked_Out = 1, Is_On_Hold = 0 WHERE Book_Isbn = ? AND Copy_Num = ?",
                 isbn, copyNum);
@@ -234,24 +234,23 @@ public class Database {
 
     public static boolean returnBookAndSetPenalties(String isDamaged,
             String user, String isbn, String copyNum) {
-        boolean success = true;
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
-            PreparedStatement ps = createPreparedStatement(con, 
+            PreparedStatement ps = createPreparedStatement(con,
                 "UPDATE StudentFaculty, Issues, BookCopy SET Penalty = IFNULL(Penalty, 0) + " +
                 "(DATEDIFF(CURDATE(), Expected_Return_Date) * 50), Is_Debarred = IF(IFNULL(Penalty, " +
-                "0) + (DATEDIFF(CURDATE(), Expected_Return_Date) * 50) >= 10000, 1, 0), Return_Date =" +
-                "CURDATE(), Is_Checked_Out = 0, Is_Damaged = ? WHERE Username = ? AND Issues.Book_Isbn = ? " +
+                "0) + (DATEDIFF(CURDATE(), Expected_Return_Date) * 50) >= 10000, 1, 0), Return_Date = " +
+                "NOW(), Is_Checked_Out = 0, Is_Damaged = ? WHERE Username = ? AND Issues.Book_Isbn = ? " +
                 "AND BookCopy.Book_Isbn = ? AND Issues.Book_Isbn = BookCopy.Book_Isbn " +
                 "AND Book_Copy_Num = ? AND Copy_Num = ? AND Return_Date IS NULL AND " +
-                "User_Username = ? AND Is_Checked_Out = 1", isDamaged, user, isbn, isbn, copyNum, copyNum, user);
+                "User_Username = ? AND Is_Checked_Out = 1",
+                isDamaged, user, isbn, isbn, copyNum, copyNum, user);
             ) {
-            int rs = ps.executeUpdate();
+            return 3 == ps.executeUpdate();
         } catch (Exception e) {
-            success = false;
             System.err.println("Exception: " + e.getMessage());
         }
-        return success;
+        return false;
     }
 
     public static HashMap<String, Integer> damagedBookReport(String month, String sub1, String sub2, String sub3) {
