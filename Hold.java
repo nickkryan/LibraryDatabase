@@ -31,7 +31,7 @@ public class Hold extends GridPane {
 
 
     private RadioButton option1, option2, option3;
-
+    private TextField issue_id;
     private ObservableList<Book> availableBooks, reservedBooks;
     private Book selected;
 
@@ -73,7 +73,8 @@ public class Hold extends GridPane {
         ListView<Book> reservedView = new ListView<>(reservedBooks);
         reservedView.setPrefHeight(reserved.size()*30 + 2);
         reservedView.setPrefWidth(longestString*7);
-        add(reservedView, 0, 4, 3, 1);
+        add(reservedView, 0, 5, 3, 1);
+
 
         final Text actionTarget = new Text();
         actionTarget.setFill(Color.FIREBRICK);
@@ -84,7 +85,7 @@ public class Hold extends GridPane {
         divide.setAlignment(Pos.CENTER);
         divide.getChildren().add(reservedDivide);
         divide.setMargin(reservedDivide, new Insets(15, 0, 15, 0));
-        add(divide, 0, 3, 3, 1);
+        add(divide, 0, 4, 3, 1);
 
         Button submit = new Button("Submit");
         HBox hbBtn2 = new HBox(10);
@@ -92,6 +93,14 @@ public class Hold extends GridPane {
         hbBtn2.getChildren().add(submit);
         hbBtn2.setMargin(submit, new Insets(30, 0, 0, 18));
         add(hbBtn2, 1, 2);
+
+        issue_id = new TextField("Issue_ID");
+        issue_id.setEditable(false);
+        HBox hbIssue_ID = new HBox();
+        hbIssue_ID.setAlignment(Pos.CENTER);
+        hbIssue_ID.getChildren().add(issue_id);
+        hbIssue_ID.setMargin(issue_id, new Insets(0,0,0,18));
+        add(hbIssue_ID, 0, 3, 3, 1);
 
         submit.setOnAction((ActionEvent e) -> {
             selected = listView.getSelectionModel().getSelectedItem();
@@ -115,7 +124,6 @@ public class Hold extends GridPane {
         add(hbBtn3, 2, 2);
         close.setOnAction((ActionEvent e) -> {System.exit(0);});
 
-
         Button back = new Button("Back");
         HBox hbBtnBack = new HBox(10);
         hbBtnBack.setAlignment(Pos.CENTER);
@@ -128,5 +136,6 @@ public class Hold extends GridPane {
     public static Scene makeScene(Main app, String user, ArrayList<Book> books) {
         return new Scene(new Hold(app, user, books));
     }
+
 }
 
