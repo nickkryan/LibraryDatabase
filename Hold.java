@@ -81,6 +81,7 @@ public class Hold extends GridPane {
         hbBtnBack.setAlignment(Pos.CENTER);
         hbBtnBack.getChildren().add(back);
         hbBtnBack.setMargin(back, new Insets(30, 0, 0, 0));
+        back.setOnAction((ActionEvent e) -> app.changeScene(SearchBooks.makeScene(app, username)));
         add(hbBtnBack, 0, 2);
     }
 

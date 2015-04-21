@@ -116,36 +116,32 @@ public class Database {
         return resultBooks;
     }
 
-    public static boolean searchTitle(String user, String pass) {
+    public static ArrayList<Book> searchAuthors(String authorQuery) {
+        ArrayList<Book> resultBooks = new ArrayList<>();
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
             PreparedStatement ps = createPreparedStatement(
-                con, "SELECT * FROM User WHERE Username = ? AND Password = ?",
-                user, pass);
+                con, "SELECT * FROM Book, Authors WHERE Book.Isbn = Authors.Book_Isbn AND Authors.Name = ?",
+                authorQuery);
             ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
-                return user.equals(rs.getString(1)) && pass.equals(rs.getString(2));
+                resultBooks.add(new Book(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getInt(3),
+                        rs.getBoolean(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getInt(8),
+                        rs.getInt(9),
+                        rs.getString(10)
+                    ));
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
         }
-        return false;
-    }
-
-    public static boolean searchAuthor(String user, String pass) {
-        try (Connection con = DriverManager.getConnection(conString,
-                "cs4400_Group_25", "S3UAsEET");
-            PreparedStatement ps = createPreparedStatement(
-                con, "SELECT * FROM User WHERE Username = ? AND Password = ?",
-                user, pass);
-            ResultSet rs = ps.executeQuery();) {
-            while (rs.next()) {
-                return user.equals(rs.getString(1)) && pass.equals(rs.getString(2));
-            }
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getMessage());
-        }
-        return false;
+        return resultBooks;
     }
 
     public static HashMap<String, Integer> damagedBookReport(String month, String sub1, String sub2, String sub3) {

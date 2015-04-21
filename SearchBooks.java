@@ -96,7 +96,16 @@ public class SearchBooks extends GridPane {
                 }
 
             } else if (!author.getText().equals("")) {
-
+                try {
+                    String authorQuery = author.getText();
+                    if (!authorQuery.trim().equals("")) {
+                        bookResults = Database.searchAuthors(author.getText());
+                    } else {
+                        actionTarget.setText("Invalid Author Search Query");
+                    }
+                } catch (Exception f) {
+                    actionTarget.setText("Invalid Author Search Query");
+                }
             }
             app.changeScene(Hold.makeScene(app, user, bookResults));
         });
