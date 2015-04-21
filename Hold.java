@@ -31,10 +31,10 @@ public class Hold extends GridPane {
 
     private RadioButton option1, option2, option3;
 
-    private ObservableList<Integer> availableBooks;
-    private Integer selected;
+    private ObservableList<Book> availableBooks;
+    private Book selected;
 
-    public Hold(Main app, String username, ArrayList aList) {
+    public Hold(Main app, String username, ArrayList<Book> books) {
         this.app = app;
 
         setAlignment(Pos.CENTER);
@@ -50,8 +50,8 @@ public class Hold extends GridPane {
 
 
 
-        availableBooks = FXCollections.observableArrayList(aList);
-        ListView<Integer> listView = new ListView<Integer>(availableBooks);
+        availableBooks = FXCollections.observableArrayList(books);
+        ListView<Book> listView = new ListView<Book>(availableBooks);
         add(listView, 0, 1, 3, 1);
 
 
@@ -84,8 +84,8 @@ public class Hold extends GridPane {
         add(hbBtnBack, 0, 2);
     }
 
-    public static Scene makeScene(Main app, String user, ArrayList test) {
-        return new Scene(new Hold(app, user, test));
+    public static Scene makeScene(Main app, String user, ArrayList<Book> books) {
+        return new Scene(new Hold(app, user, books));
     }
 }
 

@@ -65,16 +65,16 @@ public class SearchBooks extends GridPane {
 
         Button search = new Button("Search");
         search.setOnAction(e -> {
-            ArrayList<Integer> bookIsbns = new ArrayList<Integer>();
+            ArrayList<Book> bookResults = new ArrayList<Book>();
             if (!isbn.getText().equals("")) {
                 try {
-                    int ISBN = Integer.parseInt(isbn.getText());
-                    if (ISBN > 0) {
-                        ISBN = Database.searchISBN(isbn.getText());
-                        if (ISBN == -1) {
+                    Book bookByIsbn = null;
+                    if (Integer.parseInt(isbn.getText()) > 0) {
+                        bookByIsbn = Database.searchISBN(isbn.getText());
+                        if (bookByIsbn == null) {
                             actionTarget.setText("Invalid ISBN");
                         } else {
-                            bookIsbns.add(ISBN);
+                            bookResults.add(bookByIsbn);
                         }
                     } else {
                         actionTarget.setText("Invalid ISBN");
@@ -83,10 +83,22 @@ public class SearchBooks extends GridPane {
                     actionTarget.setText("Invalid ISBN");
                 }
             } else if (!title.getText().equals("")) {
+                try {
+                    String titleQuery = title.getText();
+                    if (!titleQuery.trim().equals("")) {
+                        bookResults = Database.searchBookTitles(title.getText());
+                        
+                    } else {
+                        actionTarget.setText("Invalid Book Title Search Query");
+                    }
+                } catch (Exception f) {
+                    actionTarget.setText("Invalid Book Title Search Query");
+                }
 
             } else if (!author.getText().equals("")) {
 
             }
+            app.changeScene(Hold.makeScene(app, user, bookResults));
         });
 
         Button close = new Button("Close");

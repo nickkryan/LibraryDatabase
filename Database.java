@@ -3,6 +3,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
 
 public class Database {
     private static final String conString =
@@ -57,7 +59,7 @@ public class Database {
         return false;
     }
 
-    public static int searchISBN(String ISBN) {
+    public static Book searchISBN(String ISBN) {
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
             PreparedStatement ps = createPreparedStatement(
@@ -65,12 +67,53 @@ public class Database {
                 ISBN);
             ResultSet rs = ps.executeQuery();) {
             if (rs.next()) {
-                return rs.getInt(1);
+                return new Book(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getInt(3),
+                        rs.getBoolean(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getInt(8),
+                        rs.getInt(9),
+                        rs.getString(10)
+                    );
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
         }
-        return -1;
+        return null;
+    }
+
+    public static ArrayList<Book> searchBookTitles(String titleQuery) {
+        ArrayList<Book> resultBooks = new ArrayList<>();
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = con.prepareStatement(
+                "SELECT * FROM Book WHERE Book.Title LIKE ?");
+            ) {
+            ps.setString(1, "%" + titleQuery + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                resultBooks.add(new Book(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getInt(3),
+                        rs.getBoolean(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getInt(8),
+                        rs.getInt(9),
+                        rs.getString(10)
+                    ));
+            }
+            rs.close();
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return resultBooks;
     }
 
     public static boolean searchTitle(String user, String pass) {
