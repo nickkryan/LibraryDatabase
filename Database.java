@@ -185,11 +185,11 @@ public class Database {
     }
 
     public static String[] checkoutBookInfo(String issueId) {
-        String[] issueInfo = new String[3];
+        String[] issueInfo = new String[5];
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
             PreparedStatement ps = createPreparedStatement(
-                con, "SELECT I.User_Username, I.Book_Isbn, I.Book_Copy_Num, I.Return_Date" +
+                con, "SELECT I.User_Username, I.Book_Isbn, I.Book_Copy_Num, I.Return_Date, I.Date_Of_Issue" +
                 " From Issues as I WHERE I.Issue_ID = ?",
                 issueId);
             ResultSet rs = ps.executeQuery();) {
@@ -198,11 +198,33 @@ public class Database {
                 issueInfo[1] = rs.getString(2);
                 issueInfo[2] = rs.getString(3);
                 issueInfo[3] = rs.getString(4);
+                issueInfo[4] = rs.getString(5); // date of issue
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
         }
         return issueInfo;
+    }
+
+    public static boolean checkoutBookAndUpdateDb(String currentDate, String isbn, String copyNum,
+        String user) {
+        boolean success = true;
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            
+            PreparedStatement ps = createPreparedStatement(con,
+                "INSERT INTO Issues SELECT 0, ?, NULL, DATE_ADD(?, INTERVAL 14 DAY), NULL, 0, " +
+            "?, ?, ? FROM StudentFaculty, BookCopy WHERE Username = ? AND " +
+            "Is_Debarred = 0 AND Book_Isbn = ? AND Copy_Num = ? AND Is_Damaged = 0 AND ((Is_On_Hold = 0)" +
+            " OR ((Is_On_Hold = 1) AND (DATEDIFF(?, Hold_Date) > 3)))",
+                currentDate, currentDate, isbn, copyNum, user, user, isbn, copyNum, currentDate);
+            ) {
+            int rs = ps.executeUpdate();
+        } catch (Exception e) {
+            success = false;
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return success;
     }
 
     public static boolean returnBookAndSetPenalties(String isDamaged,

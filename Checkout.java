@@ -11,12 +11,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
 
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.paint.Paint;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
+
+import java.time.LocalDate;
 
 public class Checkout extends GridPane {
     private final Main app;
@@ -73,22 +76,65 @@ public class Checkout extends GridPane {
         add(estReturnDateLabel, 2, 3);
         add(estReturnDate, 3, 3);
 
-        Button submit = new Button("Submit Isbn");
+        final Text actionTarget = new Text();
+        actionTarget.setFill(Color.FIREBRICK);
+        add(actionTarget, 3, 5);
+
+        Button submit = new Button("Isbn Submit");
         HBox hbBtn3 = new HBox(10);
         hbBtn3.setAlignment(Pos.CENTER);
         hbBtn3.getChildren().add(submit);
         hbBtn3.setMargin(submit, new Insets(15, 0, 0, 0));
+        add(hbBtn3, 1, 5);
         submit.setOnAction(e -> {
             String[] info = Database.checkoutBookInfo(issue_id.getText());
-        });
-        add(hbBtn3, 3, 4, 2, 1);
+            String[] date = info[4].split(" ");
+            String[] dateComponents = date[0].split("-");
+            LocalDate issueDate = LocalDate.of(Integer.parseInt(dateComponents[0]), 
+                Integer.parseInt(dateComponents[1]), 
+                Integer.parseInt(dateComponents[2]));
+            int yearDiff = LocalDate.now().getYear() - issueDate.getYear();
+            int monthDiff = LocalDate.now().getMonthValue() - issueDate.getMonthValue();
+            int dayDiff = LocalDate.now().getDayOfMonth() - issueDate.getDayOfMonth();
 
+            if (info[3] != null) {
+                actionTarget.setText("Invalid issue: Already checked out/returned.");
+                username.setText("");
+                isbn.setText("");
+                copyNum.setText("");
+                checkoutDate.setText("");
+                estReturnDate.setText("");
+            } else if (yearDiff > 0 || monthDiff > 0 || dayDiff > 3) {
+                actionTarget.setText("Issue date greater than 3 days, hold request expired\n Please submit a new hold or a future hold request.");
+                username.setText("");
+                isbn.setText("");
+                copyNum.setText("");
+                checkoutDate.setText("");
+                estReturnDate.setText("");
+            } else {
+                actionTarget.setText("");
+                username.setText(info[0]);
+                isbn.setText(info[1]);
+                copyNum.setText(info[2]);
+                checkoutDate.setText(LocalDate.now().toString());
+                estReturnDate.setText(LocalDate.now().plusDays(14).toString());
+            }
+        });
 
         Button locate = new Button("Confirm");
         HBox hbBtn2 = new HBox(10);
         hbBtn2.setAlignment(Pos.CENTER);
         hbBtn2.getChildren().add(locate);
         hbBtn2.setMargin(locate, new Insets(15, 0, 0, 0));
+        locate.setOnAction(e -> {
+            boolean result = Database.checkoutBookAndUpdateDb(checkoutDate.getText(),
+                isbn.getText(), copyNum.getText(), username.getText());
+            if (result) {
+                actionTarget.setText("Successfully checked out!");
+            } else {
+                actionTarget.setText("Error ocurred");
+            }
+        });
         add(hbBtn2, 2, 4, 2, 1);
 
         Button back = new Button("Back");
