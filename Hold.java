@@ -31,7 +31,7 @@ public class Hold extends GridPane {
 
     private RadioButton option1, option2, option3;
 
-    private ObservableList<Book> availableBooks;
+    private ObservableList<Book> availableBooks, reservedBooks;
     private Book selected;
 
     public Hold(Main app, String username, ArrayList<Book> books) {
@@ -48,12 +48,41 @@ public class Hold extends GridPane {
         hbMainTitle.getChildren().add(mainTitle);
         add(hbMainTitle, 0, 0, 4, 1);
 
+        ArrayList<Book> reserved = new ArrayList<>();
 
+        int longestString = 0;
+        System.out.println(books.size());
+        for (int i = 0; i < books.size(); i++) {
+            int temp = books.get(i).toString().length();
+            if (temp > longestString) {
+                longestString = temp;
+            }
+            if (books.get(i).isReserved()) {
+                System.out.println(books.get(i));
+                reserved.add(books.get(i));
+            }
+        }
+        books.removeAll(reserved);
+        System.out.println(books.size());
 
         availableBooks = FXCollections.observableArrayList(books);
         ListView<Book> listView = new ListView<Book>(availableBooks);
         add(listView, 0, 1, 3, 1);
+        listView.setPrefHeight(books.size()*30 + 2);
+        listView.setPrefWidth(longestString*7);
 
+        reservedBooks = FXCollections.observableArrayList(reserved);
+        ListView<Book> reservedView = new ListView<>(reservedBooks);
+        reservedView.setPrefHeight(reserved.size()*30 + 2);
+        reservedView.setPrefWidth(longestString*7);
+        add(reservedView, 0, 4, 3, 1);
+
+        Label reservedDivide = new Label("Reserved Books\n");
+        HBox divide = new HBox();
+        divide.setAlignment(Pos.CENTER);
+        divide.getChildren().add(reservedDivide);
+        divide.setMargin(reservedDivide, new Insets(15, 0, 15, 0));
+        add(divide, 0, 3, 3, 1);
 
         Button submit = new Button("Submit");
         HBox hbBtn2 = new HBox(10);
