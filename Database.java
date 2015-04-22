@@ -112,10 +112,6 @@ public class Database {
                     ));
 
             }
-            // HashMap<String, String> numAvailable = numAvailableCopies(queryIsbns);
-            // for (Book b : resultBooks) {
-            //     b.setNumAvailableCopies(numAvailable.get(String.valueOf(b.getIsbn())));
-            // }
 
             rs.close();
         } catch (Exception e) {
@@ -195,13 +191,10 @@ public class Database {
                         rs.getString(7),
                         rs.getInt(8),
                         rs.getInt(9),
-                        rs.getString(10)
+                        rs.getString(10),
+                        numAvailableCopy(rs.getString(1))
                     ));
                 queryIsbns.add(rs.getString(1));
-            }
-            HashMap<String, String> numAvailable = numAvailableCopies(queryIsbns);
-            for (Book b : resultBooks) {
-                b.setNumAvailableCopies(numAvailable.get(String.valueOf(b.getIsbn())));
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
