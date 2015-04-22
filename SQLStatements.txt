@@ -77,6 +77,9 @@ copyNumOfHoldRequest(String isbn) {
             "OR (Is_On_Hold = 1 AND (DATEDIFF(CURDATE(), Hold_Date) >= 3))) AND Is_Checked_Out = 0", isbn);
 
 requestHoldUpdateDb(String isbn, String copyNum, String user) {
+            "SELECT * FROM StudentFaculty WHERE Username = ? AND Is_Debarred = 0",
+                user);
+
             "INSERT INTO Issues SELECT 0, CURDATE(), NULL, DATE_ADD(CURDATE(), INTERVAL 17 DAY), " +
             "NULL, 0, ?, ?, ? FROM StudentFaculty, BookCopy WHERE Username = ?" +
             " AND Is_Debarred = 0 AND Book_Isbn = ? AND Copy_Num = ? AND Is_Damaged = 0" +
