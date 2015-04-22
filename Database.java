@@ -622,6 +622,46 @@ public class Database {
         return null;
     }
 
+    public static String[] getFutureHoldRequest(String isbn) {
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "SELECT DISTINCT I.Book_Copy_Num, earliest.AvailableDate FROM "
+                + "Issues I INNER JOIN (SELECT MIN(available.Expected_Return_Date) AS "
+                + "AvailableDate FROM (SELECT issuedCopies.* FROM (SELECT BookCopy.Copy_Num "
+                + "AS CopyNum, Issues.Expected_Return_Date, Issues.Book_Isbn, "
+                + "BookCopy.Is_On_Hold, Future_Requester, Hold_Date FROM Issues "
+                + "INNER JOIN BookCopy ON Issues.Book_Isbn = BookCopy.Book_Isbn "
+                + "AND Issues.Book_Copy_Num = BookCopy.Copy_Num WHERE "
+                + "BookCopy.Is_Checked_Out = 1 OR (BookCopy.Is_On_Hold = 1 AND "
+                + "DATEDIFF(CURDATE(), BookCopy.Hold_Date) < 3)) issuedCopies WHERE "
+                + "issuedCopies.Book_Isbn = ? AND issuedCopies.Future_Requester IS NULL) available) "
+                + "earliest ON earliest.AvailableDate = I.Expected_Return_Date",
+                    isbn);
+            ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                return new String[]{rs.getString(1), rs.getString(2)};
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static boolean setFutureHoldRequest(String user, String isbn, String copyNum) {
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "UPDATE BookCopy SET Future_Requester = ? WHERE "
+                + "Book_Isbn = ? AND Copy_Num = ?",
+                    user, isbn, copyNum);) {
+            return 1 == ps.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return false;
+    }
+
     private static PreparedStatement createPreparedStatement(Connection con, String sql, String ... args) throws SQLException {
         PreparedStatement ps = con.prepareStatement(sql);
         for (int i = 0; i < args.length; i++) {
