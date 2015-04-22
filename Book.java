@@ -52,6 +52,10 @@ public class Book {
 		this.numAvailableCopies = numAvailableCopies;
 	}
 
+	public void decNumAvailableCopies() {
+		this.numAvailableCopies = "" + (Integer.parseInt(numAvailableCopies) - 1);
+	}
+
 	public String toString() {
 		return "Isbn: " + isbn + " | Title: " + title + " | Edition: " +
 			edition + " | # Available Copies: " + numAvailableCopies;

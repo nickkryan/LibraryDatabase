@@ -32,7 +32,6 @@ public class Hold extends GridPane {
     private RadioButton option1, option2, option3;
     private TextField issue_id, holdReqDate, estRetDate;
     private ObservableList<Book> availableBooks, reservedBooks;
-    private Book selected;
 
     public Hold(Main app, String username, ArrayList<Book> books) {
         this.app = app;
@@ -133,7 +132,7 @@ public class Hold extends GridPane {
         add(actionTarget, 1, 7, 2, 1);
 
         submit.setOnAction((ActionEvent e) -> {
-            selected = listView.getSelectionModel().getSelectedItem();
+            Book selected = listView.getSelectionModel().getSelectedItem();
             if (selected == null) {
                 actionTarget.setText("Please select a book");
             } else {
@@ -150,12 +149,14 @@ public class Hold extends GridPane {
                     estRetDate.setText(LocalDateTime.now().plusDays(17).format(DateTimeFormatter
                         .ofPattern("yyyy-MM-dd HH:mm:ss")));
                     issue_id.setText("" + id);
+                    selected.decNumAvailableCopies();
+                    availableBooks.remove(selected);
+                    availableBooks.add(selected);
                 } else if (id == -2) {
                     actionTarget.setText("Debarred user!");
                 } else {
                     actionTarget.setText("Hold request failed.");
                 }
-                selected.setNumAvailableCopies(String.valueOf(Integer.parseInt(selected.getNumAvailableCopies()) - 1));
             }
         });
     }
