@@ -52,6 +52,7 @@ public class Hold extends GridPane {
         ArrayList<Book> reserved = new ArrayList<>();
 
         int longestString = 0;
+
         for (int i = 0; i < books.size(); i++) {
             int temp = books.get(i).toString().length();
             if (temp > longestString) {
@@ -62,6 +63,7 @@ public class Hold extends GridPane {
             }
         }
         books.removeAll(reserved);
+
 
         availableBooks = FXCollections.observableArrayList(books);
         ListView<Book> listView = new ListView<Book>(availableBooks);

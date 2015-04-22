@@ -10,11 +10,11 @@ public class Book {
 	private int copyrightYear;
 	private int shelfNum;
 	private String subjectName;
-	private int numAvailableCopies;
+	private String numAvailableCopies;
 
 	public Book(int isbn, String title, int cost, boolean isReserved, int edition,
 		String publisher, String publisherLocation, int copyrightYear, int shelfNum,
-		String subjectName, int numAvailableCopies) {
+		String subjectName, String numAvailableCopies) {
 		this.setIsbn(isbn);
 		this.setTitle(title);
 		this.cost = cost;
@@ -41,19 +41,20 @@ public class Book {
 		this.copyrightYear = copyrightYear;
 		this.shelfNum = shelfNum;
 		this.setSubjectName(subjectName);
-		this.numAvailableCopies = -1;
+		this.numAvailableCopies = "-1";
 	}
 
-	public int getNumAvailableCopies() {
+	public String getNumAvailableCopies() {
 		return numAvailableCopies;
 	}
 
-	public void setNumAvailableCopies(int numAvailableCopies) {
+	public void setNumAvailableCopies(String numAvailableCopies) {
 		this.numAvailableCopies = numAvailableCopies;
 	}
 
 	public String toString() {
-		return "Isbn: " + isbn + " Title: " + title + " Edition: " + edition;
+		return "Isbn: " + isbn + " | Title: " + title + " | Edition: " +
+			edition + " | # Available Copies: " + numAvailableCopies;
 	}
 
 	public String getSubjectName() {

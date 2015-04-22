@@ -49,7 +49,6 @@ public class Database {
                 name, dob, gender, email, address, facultyStatus ? "1" : "0",
                 department, user);) {
             int rs = ps.executeUpdate();
-            System.out.println(rs);
             return rs == 1;
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
@@ -57,15 +56,15 @@ public class Database {
         return false;
     }
 
-    public static Book searchISBN(String ISBN) {
+    public static Book searchISBN(String isbn) {
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
             PreparedStatement ps = createPreparedStatement(
                 con, "SELECT * FROM Book as B WHERE (B.Isbn = ?)",
-                ISBN);
+                isbn);
             ResultSet rs = ps.executeQuery();) {
             if (rs.next()) {
-                return new Book(
+                Book b = new Book(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getInt(3),
@@ -77,6 +76,9 @@ public class Database {
                         rs.getInt(9),
                         rs.getString(10)
                     );
+                String numAvailable = numAvailableCopy(String.valueOf(b.getIsbn()));
+                b.setNumAvailableCopies(numAvailable);
+                return b;
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
@@ -91,6 +93,7 @@ public class Database {
             PreparedStatement ps = con.prepareStatement(
                 "SELECT * FROM Book WHERE Book.Title LIKE ?");
             ) {
+            ArrayList<String> queryIsbns = new ArrayList<String>();
             ps.setString(1, "%" + titleQuery + "%");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -104,14 +107,40 @@ public class Database {
                         rs.getString(7),
                         rs.getInt(8),
                         rs.getInt(9),
-                        rs.getString(10)
+                        rs.getString(10),
+                        numAvailableCopy(rs.getString(1))
                     ));
+
             }
+            // HashMap<String, String> numAvailable = numAvailableCopies(queryIsbns);
+            // for (Book b : resultBooks) {
+            //     b.setNumAvailableCopies(numAvailable.get(String.valueOf(b.getIsbn())));
+            // }
+
             rs.close();
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
         }
         return resultBooks;
+    }
+
+    public static String numAvailableCopy(String bookIsbn) {
+        String resultAvailableCopies = "";
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(con,
+                "SELECT COUNT(BookCopy.Copy_Num) FROM BookCopy WHERE BookCopy.Is_Checked_Out = 0 " +
+                "AND BookCopy.Is_Damaged = 0 AND BookCopy.Is_On_Hold = 0 AND BookCopy.Book_Isbn = ?", bookIsbn);
+            ResultSet rs = ps.executeQuery();
+            ) {
+            if (rs.next()) {
+                resultAvailableCopies = rs.getString(1);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return resultAvailableCopies;
     }
 
     public static HashMap<String, String> numAvailableCopies(ArrayList<String> bookIsbn) {
@@ -129,6 +158,8 @@ public class Database {
             }
             values += ")";
             PreparedStatement ps = con.prepareStatement(query);
+            System.out.println("values: " + values);
+            System.out.println("ps: " + ps);
             ps.setString(1, values);
             ResultSet rs = ps.executeQuery();
             ps.close();
@@ -152,6 +183,7 @@ public class Database {
                 con, "SELECT * FROM Book, Authors WHERE Book.Isbn = Authors.Book_Isbn AND Authors.Name = ?",
                 authorQuery);
             ResultSet rs = ps.executeQuery();) {
+            ArrayList<String> queryIsbns = new ArrayList<String>();
             while (rs.next()) {
                 resultBooks.add(new Book(
                         rs.getInt(1),
@@ -165,6 +197,11 @@ public class Database {
                         rs.getInt(9),
                         rs.getString(10)
                     ));
+                queryIsbns.add(rs.getString(1));
+            }
+            HashMap<String, String> numAvailable = numAvailableCopies(queryIsbns);
+            for (Book b : resultBooks) {
+                b.setNumAvailableCopies(numAvailable.get(String.valueOf(b.getIsbn())));
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
