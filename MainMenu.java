@@ -79,8 +79,9 @@ public class MainMenu extends GridPane {
             add(popReport, 1, 3);
             add(userReport, 1, 4);
             add(subReport, 1, 5);
-            add(close, 1, 6);
         }
+        add(close, 1, 6);
+
 
 
     }
