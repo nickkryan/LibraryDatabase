@@ -70,17 +70,19 @@ public class MainMenu extends GridPane {
         add(extension, 0, 2);
         add(futureHold, 0, 3);
         add(track, 0, 4);
-        add(checkout, 0, 5);
-        add(returnBook, 0, 6);
 
         if (Database.checkIfUserIsStaff(user)) {
+            add(checkout, 0, 5);
+            add(returnBook, 0, 6);
             add(lostDamaged, 1, 1);
             add(damReport, 1, 2);
             add(popReport, 1, 3);
             add(userReport, 1, 4);
             add(subReport, 1, 5);
+            add(close, 1, 6);
+        } else {
+            add(close, 1, 4);
         }
-        add(close, 1, 6);
 
 
 
