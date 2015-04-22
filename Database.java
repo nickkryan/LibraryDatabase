@@ -662,6 +662,21 @@ public class Database {
         return false;
     }
 
+    public static boolean checkIfUserIsStaff(String user) {
+        try (Connection con = DriverManager.getConnection(conString,
+                "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement ps = createPreparedStatement(
+                con, "SELECT Is_Staff FROM User WHERE User.Username = ?", user);
+             ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                return (1 == rs.getInt(1));
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
+        return false;
+    }
+
     private static PreparedStatement createPreparedStatement(Connection con, String sql, String ... args) throws SQLException {
         PreparedStatement ps = con.prepareStatement(sql);
         for (int i = 0; i < args.length; i++) {
