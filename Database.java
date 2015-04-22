@@ -314,6 +314,9 @@ public class Database {
         int issue_id = -1;
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
+            PreparedStatement isUserDebarred = createPreparedStatement(con,
+                "SELECT * FROM StudentFaculty WHERE Username = ? AND Is_Debarred = 0",
+                user);
 
             PreparedStatement ps = createPreparedStatement(con,
                 "INSERT INTO Issues SELECT 0, CURDATE(), NULL, DATE_ADD(CURDATE(), INTERVAL 17 DAY), " +
@@ -330,6 +333,10 @@ public class Database {
             PreparedStatement returnIssue_ID = createPreparedStatement(con,
                 "SELECT MAX(Issue_ID) FROM Issues");
             ){
+            ResultSet isDebarred = isUserDebarred.executeQuery();
+            if (!isDebarred.next()) {
+                return -2;
+            }
             int rs = ps.executeUpdate();
             int bsResult = bookSetPs.executeUpdate();
             ResultSet idSet = returnIssue_ID.executeQuery();

@@ -64,30 +64,22 @@ public class Hold extends GridPane {
         }
         books.removeAll(reserved);
 
-
         availableBooks = FXCollections.observableArrayList(books);
         ListView<Book> listView = new ListView<Book>(availableBooks);
         add(listView, 0, 1, 3, 1);
         listView.setPrefHeight(books.size()*30 + 2);
         listView.setPrefWidth(longestString*7);
 
-        reservedBooks = FXCollections.observableArrayList(reserved);
-        ListView<Book> reservedView = new ListView<>(reservedBooks);
-        reservedView.setPrefHeight(reserved.size()*30 + 2);
-        reservedView.setPrefWidth(longestString*7);
-        add(reservedView, 0, 5, 3, 1);
+        Label holdRequestDate = new Label("Hold Request Date");
 
 
-        final Text actionTarget = new Text();
-        actionTarget.setFill(Color.FIREBRICK);
-        add(actionTarget, 1, 6);
-
-        Label reservedDivide = new Label("Reserved Books\n");
-        HBox divide = new HBox();
-        divide.setAlignment(Pos.CENTER);
-        divide.getChildren().add(reservedDivide);
-        divide.setMargin(reservedDivide, new Insets(15, 0, 15, 0));
-        add(divide, 0, 4, 3, 1);
+        Button back = new Button("Back");
+        HBox hbBtnBack = new HBox(10);
+        hbBtnBack.setAlignment(Pos.CENTER);
+        hbBtnBack.getChildren().add(back);
+        hbBtnBack.setMargin(back, new Insets(30, 0, 0, 0));
+        back.setOnAction((ActionEvent e) -> app.changeScene(SearchBooks.makeScene(app, username)));
+        add(hbBtnBack, 0, 2);
 
         Button submit = new Button("Submit");
         HBox hbBtn2 = new HBox(10);
@@ -95,32 +87,6 @@ public class Hold extends GridPane {
         hbBtn2.getChildren().add(submit);
         hbBtn2.setMargin(submit, new Insets(30, 0, 0, 18));
         add(hbBtn2, 1, 2);
-
-        issue_id = new TextField("Issue_ID");
-        issue_id.setEditable(false);
-        HBox hbIssue_ID = new HBox();
-        hbIssue_ID.setAlignment(Pos.CENTER);
-        hbIssue_ID.getChildren().add(issue_id);
-        hbIssue_ID.setMargin(issue_id, new Insets(0,0,0,18));
-        add(hbIssue_ID, 0, 3, 3, 1);
-
-        submit.setOnAction((ActionEvent e) -> {
-            selected = listView.getSelectionModel().getSelectedItem();
-            String copyNum = Database.copyNumOfHoldRequest(String.valueOf(selected.getIsbn()));
-            int id = -1;
-            if (copyNum != null) {
-                id = Database.requestHoldUpdateDb(String.valueOf(selected.getIsbn()), copyNum, username);
-            }
-            if (id != -1) {
-                actionTarget.setText("");
-                actionTarget.setText("Copy number " + copyNum + " hold request submit.");
-                issue_id.setText("" + id);
-            } else {
-                actionTarget.setText("");
-                actionTarget.setText("Hold request failed.");
-            }
-            selected.setNumAvailableCopies(String.valueOf(Integer.parseInt(selected.getNumAvailableCopies()) - 1));
-        });
 
         Button close = new Button("Close");
         HBox hbBtn3 = new HBox(10);
@@ -130,13 +96,56 @@ public class Hold extends GridPane {
         add(hbBtn3, 2, 2);
         close.setOnAction((ActionEvent e) -> {System.exit(0);});
 
-        Button back = new Button("Back");
-        HBox hbBtnBack = new HBox(10);
-        hbBtnBack.setAlignment(Pos.CENTER);
-        hbBtnBack.getChildren().add(back);
-        hbBtnBack.setMargin(back, new Insets(30, 0, 0, 0));
-        back.setOnAction((ActionEvent e) -> app.changeScene(SearchBooks.makeScene(app, username)));
-        add(hbBtnBack, 0, 2);
+        Label issueIdLabel = new Label("Issue ID");
+        issue_id = new TextField();
+        issue_id.setEditable(false);
+        HBox hbIssue_ID = new HBox();
+        hbIssue_ID.setAlignment(Pos.CENTER);
+        hbIssue_ID.getChildren().add(issue_id);
+        hbIssue_ID.setMargin(issue_id, new Insets(0,0,0,18));
+        add(hbIssue_ID, 0, 3, 3, 1);
+
+        Label reservedDivide = new Label("Reserved Books\n");
+        HBox divide = new HBox();
+        divide.setAlignment(Pos.CENTER);
+        divide.getChildren().add(reservedDivide);
+        divide.setMargin(reservedDivide, new Insets(15, 0, 15, 0));
+        add(divide, 0, 4, 3, 1);
+
+        reservedBooks = FXCollections.observableArrayList(reserved);
+        ListView<Book> reservedView = new ListView<>(reservedBooks);
+        reservedView.setPrefHeight(reserved.size()*30 + 2);
+        reservedView.setPrefWidth(longestString*7);
+        add(reservedView, 0, 5, 3, 1);
+
+        final Text actionTarget = new Text();
+        actionTarget.setFill(Color.FIREBRICK);
+        add(actionTarget, 1, 6);
+
+        submit.setOnAction((ActionEvent e) -> {
+            selected = listView.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                actionTarget.setText("Please select a book");
+            } else {
+                String copyNum = Database.copyNumOfHoldRequest(String.valueOf(selected.getIsbn()));
+                int id = -1;
+                if (copyNum != null) {
+                    id = Database.requestHoldUpdateDb(String.valueOf(selected.getIsbn()), copyNum, username);
+                }
+                if (id > -1) {
+                    actionTarget.setText("");
+                    actionTarget.setText("Copy number " + copyNum + " hold request submit.");
+                    issue_id.setText("" + id);
+                } else if (id == -2) {
+                    actionTarget.setText("");
+                    actionTarget.setText("Debarred user!");
+                } else {
+                    actionTarget.setText("");
+                    actionTarget.setText("Hold request failed.");
+                }
+                selected.setNumAvailableCopies(String.valueOf(Integer.parseInt(selected.getNumAvailableCopies()) - 1));
+            }
+        });
     }
 
     public static Scene makeScene(Main app, String user, ArrayList<Book> books) {
