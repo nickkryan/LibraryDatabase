@@ -105,13 +105,16 @@ public class Hold extends GridPane {
         submit.setOnAction((ActionEvent e) -> {
             selected = listView.getSelectionModel().getSelectedItem();
             String copyNum = Database.copyNumOfHoldRequest(String.valueOf(selected.getIsbn()));
-            boolean result = false;
+            int id = -1;
             if (copyNum != null) {
-                result = Database.requestHoldUpdateDb(String.valueOf(selected.getIsbn()), copyNum, username);
+                id = Database.requestHoldUpdateDb(String.valueOf(selected.getIsbn()), copyNum, username);
             }
-            if (result) {
-                actionTarget.setText("Copy number " + copyNum + "hold request submit.");
+            if (id != -1) {
+                actionTarget.setText("");
+                actionTarget.setText("Copy number " + copyNum + " hold request submit.");
+                issue_id.setText("" + id);
             } else {
+                actionTarget.setText("");
                 actionTarget.setText("Hold request failed.");
             }
         });

@@ -118,11 +118,11 @@ public class Database {
         HashMap<String, String> resultAvailableCopies = new HashMap<>();
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
-            
+
             ) {
             String query = "SELECT BookCopy.Book_Isbn, COUNT(BookCopy.Copy_Num) FROM BookCopy WHERE BookCopy.Is_Checked_Out = 0 " +
                 "AND BookCopy.Is_Damaged = 0 AND BookCopy.Is_On_Hold = 0 AND BookCopy.Book_Isbn IN ? GROUP BY BookCopy.Book_Isbn";
-            
+
             String values = "(" + bookIsbn.get(0);
             for (int i = 1; i < bookIsbn.size(); i++) {
                 values += ", " + bookIsbn.get(i);
@@ -280,30 +280,37 @@ public class Database {
         return copyNum;
     }
 
-    public static boolean requestHoldUpdateDb(String isbn, String copyNum, String user) {
-        boolean success = true;
+    public static int requestHoldUpdateDb(String isbn, String copyNum, String user) {
+        int issue_id = -1;
         try (Connection con = DriverManager.getConnection(conString,
                 "cs4400_Group_25", "S3UAsEET");
-            
+
             PreparedStatement ps = createPreparedStatement(con,
                 "INSERT INTO Issues SELECT 0, CURDATE(), NULL, DATE_ADD(CURDATE(), INTERVAL 17 DAY), " +
                 "NULL, 0, ?, ?, ? FROM StudentFaculty, BookCopy WHERE Username = ?" +
                 " AND Is_Debarred = 0 AND Book_Isbn = ? AND Copy_Num = ? AND Is_Damaged = 0" +
                 " AND ((Is_On_Hold = 0) OR ((Is_On_Hold = 1) AND (DATEDIFF(CURDATE(), Hold_Date) >= 3)))",
                 isbn, copyNum, user, user, isbn, copyNum);
-            
+
             PreparedStatement bookSetPs = createPreparedStatement(con,
                 "UPDATE BookCopy SET Is_Checked_Out = 0, Is_On_Hold = 1, Hold_Date = CURDATE()" +
                 " WHERE Book_Isbn = ? AND Copy_Num = ?",
                 isbn, copyNum);
+
+            PreparedStatement returnIssue_ID = createPreparedStatement(con,
+                "SELECT MAX(Issue_ID) FROM Issues");
             ){
             int rs = ps.executeUpdate();
             int bsResult = bookSetPs.executeUpdate();
+            ResultSet idSet = returnIssue_ID.executeQuery();
+            if (idSet.next()) {
+                issue_id = idSet.getInt(1);
+                System.out.println("DB:" + issue_id);
+            }
         } catch (Exception e) {
-            success = false;
             System.err.println("Exception: " + e.getMessage());
         }
-        return success;
+        return issue_id;
     }
 
     public static boolean returnBookAndSetPenalties(String isDamaged,
