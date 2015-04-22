@@ -342,7 +342,6 @@ public class Database {
             ResultSet idSet = returnIssue_ID.executeQuery();
             if (idSet.next()) {
                 issue_id = idSet.getInt(1);
-                System.out.println("DB:" + issue_id);
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
