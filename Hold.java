@@ -119,6 +119,7 @@ public class Hold extends GridPane {
                 actionTarget.setText("");
                 actionTarget.setText("Hold request failed.");
             }
+            selected.setNumAvailableCopies(String.valueOf(Integer.parseInt(selected.getNumAvailableCopies()) - 1));
         });
 
         Button close = new Button("Close");

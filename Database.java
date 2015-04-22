@@ -305,7 +305,7 @@ public class Database {
                 "cs4400_Group_25", "S3UAsEET");
             PreparedStatement ps = createPreparedStatement(con,
                 "SELECT MIN(Copy_Num) FROM BookCopy WHERE Book_Isbn = ? AND ((Is_On_Hold = 0) " +
-                "OR (Is_On_Hold = 1 AND (DATEDIFF(CURDATE(), Hold_Date) >= 3))) AND Is_Checked_Out = 0", isbn);
+                "OR (Is_On_Hold = 1 AND (DATEDIFF(CURDATE(), Hold_Date) >= 3))) AND Is_Checked_Out = 0 AND Is_Damaged = 0", isbn);
             ResultSet rs = ps.executeQuery();
             ){
             if (rs.next()) {
