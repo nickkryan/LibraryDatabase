@@ -1,0 +1,202 @@
+SQL Statements for Database
+
+login(String user, String pass) {
+            "SELECT * FROM User WHERE Username = ? AND Password = ?",
+            user, pass);
+
+
+register(String user, String pass)
+        PreparedStatement ps = createPreparedStatement(
+            "INSERT INTO User VALUES (?, ?, false)",
+            user, pass)
+
+
+updateProfile(String name, String dob, String gender,
+    String email, String address,  facultyStatus, String department,
+    String user) {
+            "INSERT INTO StudentFaculty VALUES (?, ?, ?, 0, ?, ?, ?, 0, ?, ?)",
+            name, dob, gender, email, address, facultyStatus ? "1" : "0",
+            department, user)
+
+
+searchISBN(String ISBN) {
+            "SELECT * FROM Book as B WHERE (B.Isbn = ?)",
+            ISBN);
+
+
+
+earchBookTitles(String titleQuery) {
+            "SELECT * FROM Book WHERE Book.Title LIKE ?", "%" + titleQuery + "%");
+
+
+numAvailableCopies(ArrayList<String> bookIsbn) {
+        String query = "SELECT BookCopy.Book_Isbn, COUNT(BookCopy.Copy_Num) FROM BookCopy WHERE BookCopy.Is_Checked_Out = 0 " +
+            "AND BookCopy.Is_Damaged = 0 AND BookCopy.Is_On_Hold = 0 AND BookCopy.Book_Isbn IN ? GROUP BY BookCopy.Book_Isbn";
+
+
+searchAuthors(String authorQuery) {
+            "SELECT * FROM Book, Authors WHERE Book.Isbn = Authors.Book_Isbn AND Authors.Name = ?",
+            authorQuery);
+
+
+ trackLocation(String bookIsbn) {
+            "SELECT B.Shelf_Num, B.Subject_Name, S.Aisle_Num, S.Floor_Num " +
+            "From Shelf as S, Book as B WHERE S.Shelf_Num = B.Shelf_Num AND B.Isbn = ?",
+            bookIsbn);
+
+
+ returnBookInfo(String issueId) {
+            "SELECT I.User_Username, I.Book_Isbn, I.Book_Copy_Num, I.Return_Date" +
+            " From Issues as I WHERE I.Issue_ID = ?",
+            issueId);
+
+}
+
+ checkoutBookInfo(String issueId) {
+            "SELECT I.User_Username, I.Book_Isbn, I.Book_Copy_Num, I.Return_Date, I.Date_Of_Issue" +
+            " From Issues as I WHERE I.Issue_ID = ?",
+            issueId);
+
+}
+
+checkoutBookAndUpdateDb(String currentDate, String isbn, String copyNum,
+    String user) {
+            "INSERT INTO Issues SELECT 0, ?, NULL, DATE_ADD(?, INTERVAL 14 DAY), NULL, 0, " +
+        "?, ?, ? FROM StudentFaculty, BookCopy WHERE Username = ? AND " +
+        "Is_Debarred = 0 AND Book_Isbn = ? AND Copy_Num = ? AND Is_Damaged = 0 AND ((Is_On_Hold = 0)" +
+        " OR ((Is_On_Hold = 1) AND (DATEDIFF(?, Hold_Date) > 3)))",
+            currentDate, currentDate, isbn, copyNum, user, user, isbn, copyNum, currentDate);
+
+            "UPDATE BookCopy SET Is_Checked_Out = 1, Is_On_Hold = 0 WHERE Book_Isbn = ? AND Copy_Num = ?",
+            isbn, copyNum);
+
+
+
+copyNumOfHoldRequest(String isbn) {
+            "SELECT MIN(Copy_Num) FROM BookCopy WHERE Book_Isbn = ? AND ((Is_On_Hold = 0) " +
+            "OR (Is_On_Hold = 1 AND (DATEDIFF(CURDATE(), Hold_Date) >= 3))) AND Is_Checked_Out = 0", isbn);
+
+requestHoldUpdateDb(String isbn, String copyNum, String user) {
+            "INSERT INTO Issues SELECT 0, CURDATE(), NULL, DATE_ADD(CURDATE(), INTERVAL 17 DAY), " +
+            "NULL, 0, ?, ?, ? FROM StudentFaculty, BookCopy WHERE Username = ?" +
+            " AND Is_Debarred = 0 AND Book_Isbn = ? AND Copy_Num = ? AND Is_Damaged = 0" +
+            " AND ((Is_On_Hold = 0) OR ((Is_On_Hold = 1) AND (DATEDIFF(CURDATE(), Hold_Date) >= 3)))",
+            isbn, copyNum, user, user, isbn, copyNum);
+
+            "UPDATE BookCopy SET Is_Checked_Out = 0, Is_On_Hold = 1, Hold_Date = CURDATE()" +
+            " WHERE Book_Isbn = ? AND Copy_Num = ?",
+            isbn, copyNum);
+
+            "SELECT MAX(Issue_ID) FROM Issues");
+
+
+returnBookAndSetPenalties(String isDamaged,
+        String user, String isbn, String copyNum) {
+            "UPDATE StudentFaculty, Issues, BookCopy SET Penalty = IFNULL(Penalty, 0) + " +
+            "(DATEDIFF(CURDATE(), Expected_Return_Date) * 50), Is_Debarred = IF(IFNULL(Penalty, " +
+            "0) + (DATEDIFF(CURDATE(), Expected_Return_Date) * 50) >= 10000, 1, 0), Return_Date = " +
+            "NOW(), Is_Checked_Out = 0, Is_Damaged = ? WHERE Username = ? AND Issues.Book_Isbn = ? " +
+            "AND BookCopy.Book_Isbn = ? AND Issues.Book_Isbn = BookCopy.Book_Isbn " +
+            "AND Book_Copy_Num = ? AND Copy_Num = ? AND Return_Date IS NULL AND " +
+            "User_Username = ? AND Is_Checked_Out = 1",
+            isDamaged, user, isbn, isbn, copyNum, copyNum, user);
+
+
+damagedBookReport(String month, String sub1, String sub2, String sub3) {
+            "SELECT month.Subject_Name, COUNT( month.Subject_Name ) " +
+            "FROM ( " +
+                "SELECT damagedDate.Subject_Name, damagedDate.Isbn, damagedDate.Copy_Num " +
+                "FROM ( " +
+                    "SELECT Book.Subject_Name, MAX(damagedBooks.Return_Date) AS LastReturned, Book.Isbn, damagedBooks.Copy_Num " +
+                    "FROM Book " +
+                    "INNER JOIN ( " +
+                        "SELECT Issues.Return_Date, Issues.Book_Isbn, BookCopy.Copy_Num " +
+                        "FROM Issues " +
+                        "INNER JOIN BookCopy ON Issues.Book_Isbn = BookCopy.Book_Isbn AND Issues.Book_Copy_Num = BookCopy.Copy_Num " +
+                        "WHERE BookCopy.Is_Damaged = 1 " +
+                    ") damagedBooks ON damagedBooks.Book_Isbn = Book.Isbn " +
+                    "GROUP BY Book.Isbn, damagedBooks.Copy_Num " +
+                ") damagedDate " +
+                "WHERE MONTH(damagedDate.LastReturned) = ? " +
+                "AND ( " +
+                    "damagedDate.Subject_Name = ? " +
+                    "OR damagedDate.Subject_Name = ? " +
+                    "OR damagedDate.Subject_Name = ? " +
+                ") " +
+            ") " +
+            "month GROUP BY month.Subject_Name",
+            month, sub1, sub2, sub3);
+
+frequentUsersReport() {
+            "(SELECT MONTH(Date_Of_Issue), COUNT(User_Username), User_Username FROM Issues WHERE MONTH(Date_Of_Issue) = 1 GROUP BY User_Username HAVING COUNT(User_Username) > 10)" +
+                "UNION" +
+                "(SELECT MONTH(Date_Of_Issue), COUNT(User_Username), User_Username FROM Issues WHERE MONTH(Date_Of_Issue) = 2 GROUP BY User_Username HAVING COUNT(User_Username) > 10)");
+
+popularBookReport() {
+            "(SELECT MONTH(Date_Of_Issue), Title, Count(Isbn) "
+            + "FROM Issues INNER JOIN Book ON Book.Isbn = Issues.Book_Isbn "
+            + "Where MONTH(Date_Of_Issue) = 1 AND Isbn IN (SELECT Isbn FROM Issues GROUP BY Isbn) "
+            + "GROUP BY Isbn Limit 3) "
+            + "UNION "
+            + "(SELECT MONTH(Date_Of_Issue), Title, Count(Isbn) "
+            + "FROM Issues INNER JOIN Book ON Book.Isbn = Issues.Book_Isbn "
+            + "Where MONTH(Date_Of_Issue) = 2 AND Isbn IN (SELECT Isbn FROM Issues GROUP BY Isbn) "
+            + "GROUP BY Isbn Limit 3)");
+
+popularSubjectReport() {
+            "(SELECT MONTH(Date_Of_Issue), Subject_Name, Count(Isbn) "
+            + "FROM Issues INNER JOIN Book ON Book.Isbn = Issues.Book_Isbn "
+            + "Where MONTH(Date_Of_Issue) = 1 AND Isbn IN (SELECT Isbn FROM Issues GROUP BY Isbn) "
+            + "GROUP BY Isbn Limit 3) "
+            + "UNION "
+            + "(SELECT MONTH(Date_Of_Issue), Subject_Name, Count(Isbn) "
+            + "FROM Issues INNER JOIN Book ON Book.Isbn = Issues.Book_Isbn "
+            + "Where MONTH(Date_Of_Issue) = 2 AND Isbn IN (SELECT Isbn FROM Issues GROUP BY Isbn) "
+            + "GROUP BY Isbn Limit 3)");
+
+
+lastUser(String isbn, String copyNum) {
+            "SELECT I.User_Username FROM Issues I INNER JOIN ( "
+                + "SELECT MAX(Issues.Return_Date) AS LastReturned FROM "
+                + "Issues WHERE Book_Isbn = ? AND Book_Copy_Num = ?) "
+                + "lastReturned ON lastReturned.LastReturned = I.Return_Date",
+            isbn, copyNum);
+
+
+lostDamagedBook(String isbn, String copyNum, String username, String penalty) {
+            "UPDATE StudentFaculty, BookCopy SET Is_Debarred = IF( "
+                + "IFNULL(Penalty, 0) + ? >= 10000, 1, 0), "
+                + "Penalty = IFNULL(Penalty, 0) + ?, Is_Damaged = 1 "
+                + "WHERE StudentFaculty.Username = ? AND Book_Isbn = ? "
+                + "AND Copy_Num = ?",
+            penalty, penalty, username, isbn, copyNum);) {
+
+
+ requestExtension(String id) {
+
+            "SELECT I.Date_Of_Issue, I.Extension_Date, I.Expected_Return_Date," +
+            " CURDATE() AS New_Extension_Date, ? AS New_Estimated_Return_Date" +
+            " FROM Issues AS I, BookCopy AS B WHERE I.Issue_ID = ? AND " +
+            "B.Is_Checked_Out = 1",
+                newDate, id);
+
+
+
+ updateExtensionDate(String id, String newDate) {
+            c"UPDATE Issues, BookCopy, StudentFaculty SET Issues.Count_Of_Extensions = " +
+            "Issues.Count_Of_Extensions +1, Issues.Extension_Date = CURDATE(), Issues.Expected_Return_Date = " +
+            "? WHERE Issues.User_Username IN (SELECT Username FROM StudentFaculty WHERE Issues.Issue_ID = ? " +
+                "AND Issues.User_Username = StudentFaculty.Username AND Issues.Count_Of_Extensions < 2 AND " +
+                "StudentFaculty.Is_Faculty = 0) OR Issues.User_Username IN (SELECT Username FROM StudentFaculty " +
+                "WHERE Issues.Issue_ID = ? AND Issues.User_Username = StudentFaculty.Username AND Issues.Count_Of_Extensions < 5 " +
+                "AND StudentFaculty.Is_Faculty = 1) AND Issues.Issue_ID = ? AND Issues.Book_Copy_Num AND Issues.Book_Isbn IN " +
+            "(SELECT Book_Isbn AND Copy_Num FROM BookCopy WHERE Is_On_Hold = 0)",
+
+
+String extensionNewDate(String id) {
+    " (SELECT DATE_ADD(CURDATE() , INTERVAL 28 DAY) AS New_Date" +
+                 " From Issues INNER JOIN StudentFaculty ON Issues.User_Username " +
+                 "= StudentFaculty.Username WHERE Issue_Id = ? AND Is_Faculty" +
+                 " = 0) UNION (SELECT DATE_ADD(CURDATE() , INTERVAL 56 DAY) AS New_Date" +
+                 " From Issues INNER JOIN StudentFaculty ON Issues.User_Username = StudentFaculty.Username" +
+                 " WHERE Issue_Id = ? AND Is_Faculty = 1)",
